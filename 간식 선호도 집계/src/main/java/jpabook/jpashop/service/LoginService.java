@@ -1,0 +1,32 @@
+package jpabook.jpashop.service;
+
+import jpabook.jpashop.repository.LoginRepository;
+import jpabook.jpashop.snackDomain.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class LoginService {
+
+    private final LoginRepository loginRepository;
+
+    //로그인
+    public List<User> login(User user) {
+        List<User> findUser = loginRepository.login(user);
+        if(findUser.isEmpty()){
+            throw new IllegalStateException("not select User");
+        }
+        return findUser;
+    }
+
+    //회원 단건 조회
+    public User findOne(Long memberId){
+        return loginRepository.findOne(memberId);
+    }
+}

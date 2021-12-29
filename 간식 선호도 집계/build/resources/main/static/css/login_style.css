@@ -1,0 +1,188 @@
+@charset "utf-8";
+/* 로그인 */
+body{background:#39a1ff;}
+
+.login-box{
+	width:500px;
+	height:500px;
+	border:1px solid #fff;
+	text-align: center;
+}
+
+
+/* Button */
+.btn{box-shadow:none; text-shadow:none; height:34px; padding:5px 20px;}
+.btn+.btn{margin-left:10px;}
+.btn-red{background:tomato; color:#ffffff;}
+.btn-red:hover,.btn_red:focus,.btn_red:active{background:#eb6e60; color:#ffffff;}
+.btn-blue{background:#39a1ff; border:none; color:#ffffff;}
+.btn-blue:hover,.btn-blue:active, .btn-blue:focus{background:#2696fb; color:#ffffff;}
+.btn-blue-line{background:#fff; border:1px solid #39a1ff; color:#39a1ff;}
+.btn-blue-line:hover,.btn-blue-line:active, .btn-blue-line:focus{background:#fff; color:#39a1ff;}
+
+.btn-gray{background:#b3b3b3; border:none; color:#fff;}
+.btn-gray:hover,.btn-gray:active, .btn-gray:focus{background:#a3a3a3; color:#fff;}
+.btn-green{background:#10c469; border:none; color:#ffffff;}
+.btn-green:hover,.btn-green:active, .btn-green:focus{background:#0cb25e; color:#ffffff;}
+.btn-yellow{background:#f8c305; border:none; color:#222;}
+.btn-yellow:hover,.btn-yellow:active, .btn-yellow:focus{background:#edae0b; color:#222;}
+.clear{overflow:hidden; clear:both;}
+
+/* Basic */
+.txt-yellow{
+	color:#ffce56;
+}
+.txt-green{
+	color:#4bc0c0;
+}
+.txt-blue{
+	color:#39a1ff;
+}
+.bg-gray{
+	background:lightgray;
+	color:gray;
+	/* cursor:not-allowed; */
+}
+.bg-red{
+	background:tomato;
+	color:#fff;
+}
+.bg-yellow{
+	background:#ffce56;
+	color:#000;
+}
+.bg-green{
+	background:#4bc0c0;
+	color:#fff;
+}
+.bg-blue{
+	background:#39a1ff;
+	color:#fff;
+}
+span.bg-blue:active{
+	height:19px;
+	/* box-shadow: 0 1px 1px #39a1ff inset; */
+  background:#43a6ff;
+	border-bottom:2px solid #3685d2;
+}
+.bg-blue-line{
+	border:1px solid #39a1ff;
+	background:#fff;
+	color:#39a1ff;
+}
+.row{
+	vertical-align:middle;
+	margin:0px;
+}
+.form-inline-group{
+	display:inline-block;
+	margin-right:60px;
+}
+.w-80{
+	width:80px;
+	margin-right:0;
+}
+.w-214{
+	width:214px;
+}
+.w-265{
+	width:265px;
+}
+.w-580{
+	width:580px;
+}
+.w-675{
+	width:675px;
+}
+.w-1188{
+	width:1188px;
+}
+.mh-150{
+	height:300px;
+	max-height:150px;
+	overflow-x:hidden;
+}
+.mt10{
+	margin-top:10px;
+}
+.mr10{
+	margin-right:10px;
+}
+.mb15{
+	margin-bottom:15px;
+	}
+.ml13{
+	margin-left:13px;
+}
+div.form-control{
+	border:1px solid #f2f2f2;
+	background:#f2f2f2;
+}
+/* checkbox */
+label.container {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight:300;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color:#9399af;
+}
+/* Hide the browser's default checkbox */
+label.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top:-10px;
+  left:0;
+  height:22px;
+  width:22px;
+  background:#fff;
+  border:2px solid #39a1ff;
+  border-radius:3px;
+}
+/* On mouse-over, add a grey background color */
+label.container:hover input ~ .checkmark {
+  background:;
+}/* When the checkbox is checked, add a blue background */
+label.container input:checked ~ .checkmark {
+  background:#39a1ff;
+  border:2px solid #39a1ff;
+}
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+/* Show the checkmark when checked */
+label.container input:checked ~ .checkmark:after {
+  display: block;
+}
+/* Style the checkmark/indicator */
+label.container .checkmark:after {
+  left: 7px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border:solid #fff;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+/* scroll */
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track {background-color:#fff;}
+::-webkit-scrollbar-thumb {width:4px; background-color:#ddd; border-radius: 10px;}
+::-webkit-scrollbar-thumb:hover {background: #ddd;}

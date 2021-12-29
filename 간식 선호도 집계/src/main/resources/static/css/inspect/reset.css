@@ -1,0 +1,50 @@
+@charset "utf-8";
+/* reset */
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent; font-family:'Noto Sans KR',"Malgun Gothic","맑은 고딕",Dotum,"돋움",sans-serif; list-style:none; word-break:break-all;}
+body{line-height:1; /*min-width:1290px;*/}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
+nav ul{list-style:none}
+blockquote,q{quotes:none}
+blockquote:before,blockquote:after,q:before,q:after{content:none}
+a{margin:0;padding:0;font-size:100%;vertical-align:baseline;background:transparent; text-decoration:none; cursor:pointer; color:#888888;}
+ins{background-color:#ff9;color:#000;text-decoration:none}
+mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}
+del{text-decoration:line-through}
+abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}
+table{border-collapse:collapse;border-spacing:0}
+hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}
+input,select{vertical-align:middle}
+a, button{outline:none!important}
+a, button{cursor:pointer;}
+a:hover,a:focus{text-decoration:none;}
+address, article, aside, blockquote, body, center, dd, dir, div, dl,
+dt, figure, figcaption, footer, form, h1, h2, h3, h4, h5, h6, header,
+hgroup, hr, html, legend, listing, menu, nav, ol, p, plaintext, pre,
+section, summary, ul, xmp { display: block; }
+table { display: table; }
+caption { display: table-caption; }
+colgroup { display: table-column-group; }
+col { display: table-column; }
+thead { display: table-header-group; }
+tbody { display: table-row-group; }
+tfoot { display: table-footer-group; }
+tr { display: table-row; }
+td, th { display: table-cell; }
+li { display: list-item; }
+ruby { display: ruby; }
+rt { display: ruby-text;}
+i.ico{display:inline-block; overflow:hidden; text-indent:-500px; vertical-align:middle; margin-top:-1px;}
+input[type=text]::-ms-clear {display:none;}
+button{
+    -webkit-transition: background 0.20s linear;
+	-moz-transition: background 0.20s linear;
+	-o-transition: background 0.20s linear;
+	transition: background 0.20s linear;
+border:none;}
+label{-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;}

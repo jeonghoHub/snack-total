@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous">
+</script>
+<head th:replace="fragments/header :: header">
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+    <h1>간식 선호도 투표 사이트</h1>
+    <div class="jumbotron">
+        <p class="lead">로그인</p>
+        <label class="sr-only">Your ID</label>
+        <input type="text" id="userId" class="form-control" placeholder="아이디" autocomplete="chrome-off"><BR>
+        <label class="sr-only">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="비밀번호" autocomplete="chrome-off"><br>
+        <button style="padding : 10px;" id="btn-Yes" class="btn btn-primary btn-block">로 그 인</button>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+<script>
+
+$("#password").keydown(function(key) {
+    if(key.keyCode == 13) {
+        $("#btn-Yes").click();
+    }
+})
+
+$("#btn-Yes").click(function(){
+    let userId = $("#userId").val();
+    let password = $("#password").val();
+
+    let data = {
+        id : userId,
+        password : password
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "/api/login",
+        data : data,
+        success : function(result){
+            console.log(result);
+            let request = result.status;
+            if(request === "OK") {
+                location.replace('home');
+            } else {
+                alert("아이디 및 비밀번호를 잘못입력하셨습니다.");
+            }
+        },
+        error : function(a, b, c) {
+            alert("error");
+        }
+    })
+});
+</script>
