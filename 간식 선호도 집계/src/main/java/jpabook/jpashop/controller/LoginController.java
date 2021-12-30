@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -60,5 +61,12 @@ public class LoginController {
         } finally {
             return new ResponseEntity<>(message, headers, HttpStatus.OK);
         }
+    }
+    @RequestMapping("/api/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        session.invalidate();
+        response.sendRedirect("/login");
+        return "login";
     }
 }

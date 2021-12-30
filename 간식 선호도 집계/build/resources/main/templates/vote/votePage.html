@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous">
+</script>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <img id="image" src="C:\Users\abc\Documents\KakaoTalk_20210819_104201786.png"/>
+
+    <div th:replace="fragments/footer :: footer"/>
+</div>
+</body>
+</html>
+<script>
+        $.ajax({
+            type: "GET",
+            url: "/votePage/items",
+            success : function(result){
+                console.log(result);
+            },
+            error : function(a, b, c){
+                alert(a + b + c);
+            }
+        });
+</script>
