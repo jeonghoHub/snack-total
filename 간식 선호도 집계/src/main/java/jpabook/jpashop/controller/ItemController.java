@@ -34,18 +34,20 @@ public class ItemController {
     }
 
     @PostMapping("items/new")
-    public ResponseEntity<Message> cteate(@RequestParam("file") MultipartFile files, SnackItemForm form) throws IOException {
+    public ResponseEntity<Message> create(@RequestParam("file") MultipartFile files, SnackItemForm form) throws IOException {
         Message message = new Message();
         HttpHeaders headers = new HttpHeaders();
         System.out.println("fileInfo>>>>>>>>>>>>>>" + files);
-        String baseDir = "C:\\Users\\ServerFiles";
+        String baseDir = "C:\\Users\\abc\\Desktop\\github간식 선호도 프로젝트\\간식 선호도 집계\\src\\main\\resources\\static\\image";
         String filePath = baseDir + "\\" + files.getOriginalFilename();
-        files.transferTo(new File(filePath));
-        form.setSellImgUrl(filePath);
-
         SnackItem item = new SnackItem();
         item.setName(form.getName());
-        item.setFilePath(filePath);
+        try {
+            files.transferTo(new File(filePath));
+            item.setFilePath("/image/"+files.getOriginalFilename());
+        } catch (IOException e) {
+
+        }
         itemService.saveItem(item);
 
         message.setStatus(StatusEnum.OK);

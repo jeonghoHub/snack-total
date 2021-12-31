@@ -5,12 +5,19 @@
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
         crossorigin="anonymous">
 </script>
+<style>
+    img {
+      width: 368px;
+      height: 300px;
+      object-fit: cover;
+    }
+</style>
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <div id="card-row" class="row">
 
-    <img id="image" />
-
+    </div>
     <div th:replace="fragments/footer :: footer"/>
 </div>
 </body>
@@ -21,9 +28,42 @@
             url: "/votePage/items",
             success : function(result){
                 console.log(result);
+                let snackName = "";
+                let snackImageSrc = "";
+                for(let i = 0; i < result.length; i++){
+                    snackName = result[i].name;
+                    snackImageSrc = result[i].filePath;
+                    snackId = result[i].id;
+                    if(snackImageSrc === null) {
+                        snackImageSrc = "/image/default.png";
+                    }
+
+                    $("#card-row").append(
+                            "<div class='col-4'>"+
+                                "<div class='card'>"+
+                                    "<input type=hidden id='snack-id' name='snack-id' >"+
+                                    "<div class='card-header'>"+
+                                        snackName+
+                                    "</div>"+
+                                    "<img src="+ snackImageSrc +" alt='과자' />"+
+                                    "<div class='card-body'>"+
+                                        "<a href='#' class='btn btn-primary'>투표하기</a>"+
+                                        "<a href='#' id='delete' style='float:right' class='btn btn-danger' onclick=delete_snack(this)>삭제</a>"+
+                                        "<a href='#' id='modify' style='float:right' class='btn btn-success'>수정</a>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>");
+                    $("input[name=snack-id]").eq(i).val(snackId);
+                }
             },
             error : function(a, b, c){
                 alert(a + b + c);
             }
         });
+
+        function delete_snack(id) {
+            let a = id.parentNode.parentNode;
+            let snackid = $(a).find("#snack-id").val();
+            console.log(snackid);
+        }
 </script>
