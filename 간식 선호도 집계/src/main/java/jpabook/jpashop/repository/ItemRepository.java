@@ -2,7 +2,6 @@ package jpabook.jpashop.repository;
 
 
 import jpabook.jpashop.controller.SnackItemForm;
-import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.snackDomain.SnackItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

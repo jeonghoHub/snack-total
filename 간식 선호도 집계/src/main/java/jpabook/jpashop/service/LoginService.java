@@ -26,7 +26,7 @@ public class LoginService {
     }
 
     //회원 단건 조회
-    public User findOne(Long memberId){
-        return loginRepository.findOne(memberId);
+    public User findOne(String UserId){
+        return loginRepository.findOne(UserId);
     }
 }

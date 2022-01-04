@@ -2,7 +2,10 @@ package jpabook.jpashop.controller;
 
 
 import jpabook.jpashop.service.ItemService;
+import jpabook.jpashop.service.TotalService;
 import jpabook.jpashop.snackDomain.SnackItem;
+import jpabook.jpashop.snackDomain.SnackTotal;
+import jpabook.jpashop.snackDomain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,15 +15,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class VoteController {
 
     private final ItemService itemService;
+    private final TotalService totalService;
 
     @GetMapping("/votePage")
     public String createForm() {
@@ -33,65 +41,37 @@ public class VoteController {
         return ResponseEntity.ok(items);
     }
 
-//    @PostMapping("items/new")
-//    public ResponseEntity<Message> cteate(@RequestParam("file") MultipartFile files, SnackItemForm form) throws IOException {
-//        Message message = new Message();
-//        HttpHeaders headers = new HttpHeaders();
-//        System.out.println("fileInfo>>>>>>>>>>>>>>" + files);
-//        String baseDir = "C:\\Users\\ServerFiles";
-//        String filePath = baseDir + "\\" + files.getOriginalFilename();
-//        files.transferTo(new File(filePath));
-//        form.setSellImgUrl(filePath);
-//
-//        SnackItem item = new SnackItem();
-//        item.setName(form.getName());
-//        item.setFilePath(filePath);
-//        itemService.saveItem(item);
-//
-//        message.setStatus(StatusEnum.OK);
-//        message.setMessage("성공코드");
-//
-//        return new ResponseEntity<>(message, headers, HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/items")
-//    public String list(Model model) {
-//        List<SnackItem> items = itemService.findItems();
-//        model.addAttribute("items", items);
-//
-//        return "items/itemList";
-//    }
-//
-//    @GetMapping("items/{itemId}/edit")
-//    public String updateItemForm(@PathVariable("itemId") Long itemId, Model model){
-//        SnackItem item = itemService.findOne(itemId);
-//
-//        SnackItemForm form = new SnackItemForm();
-//        form.setId(item.getId());
-//        form.setName(item.getName());
-//
-//        model.addAttribute("form", form);
-//        return "items/updateItemForm";
-//    }
-//
-//    @PostMapping("items/{itemId}/edit")
-//    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") SnackItemForm form) {
-//
-//        itemService.updateItem(itemId, form.getName());
-//        return "redirect:/items";
-//    }
-//
-//    @RequestMapping("/items/delete")
-//    public ResponseEntity<Message> deleteItem(SnackItemForm form) {
-//        SnackItem one = itemService.findOne(form.getId());
-//        itemService.deleteOne(one.getId());
-//
-//        Message message = new Message();
-//        HttpHeaders headers = new HttpHeaders();
-//
-//        message.setStatus(StatusEnum.OK);
-//        message.setMessage("성공코드");
-//
-//        return new ResponseEntity<>(message, headers, HttpStatus.OK);
-//    }
+    @GetMapping("/votePage/search/items")
+    public ResponseEntity<?> searchList(SnackItemForm snackItemForm) {
+        List<SnackItem> items = null;
+        System.out.println(">>>>>>>" + snackItemForm.getName());
+        if(snackItemForm.getName().equals("")){
+            items = itemService.findItems();
+        } else {
+            items = totalService.searchSnack(snackItemForm.getName());
+        }
+        return ResponseEntity.ok(items);
+    }
+
+    @PostMapping("/votePage/insert/vote")
+    public ResponseEntity<?> insertVote(HttpServletRequest request, SnackItemForm snackItemForm) {
+        SnackTotal snackTotal = new SnackTotal();
+        SnackItem snackItem = new SnackItem();
+        User user = new User();
+
+        LocalDateTime date = LocalDateTime.now();
+        snackTotal.setCreatedDate(date);
+
+        snackItem.setId(snackItemForm.getId());
+        snackTotal.setSnackItem(snackItem);
+
+        HttpSession session = request.getSession();
+        String userId = (String) session.getAttribute("userId");
+        user.setId(userId);
+        snackTotal.setUser(user);
+
+        totalService.saveVote(snackTotal);
+        return ResponseEntity.ok("123");
+    }
+
 }

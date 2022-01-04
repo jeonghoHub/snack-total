@@ -1,5 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous">
+</script>
+<style>
+    .btn {
+        width: 250px;
+    }
+</style>
 <head th:replace="fragments/header :: header">
     <title>Hello</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -11,17 +20,21 @@
         <h1>Sweet snack</h1>
         <p style="margin-bottom: 70px;" class="lead"></p>
         <p>
-            <a class="btn btn-lg btn-secondary" href="/votePage">투표하러 가기</a>
+            <a class="btn btn-lg btn-secondary" href="/votePage">간식 리스트</a>
         </p>
         <p style="margin-bottom: 70px;" class="lead"></p>
         <p>
-            <a class="btn btn-lg btn-dark" href="/items/new">간식 등록</a>
-            <a class="btn btn-lg btn-dark" href="/items">간식 목록</a>
+            <a style="display: none;" class="admin btn btn-lg btn-dark" href="/items/new">간식 등록</a>
         </p>
         <p style="margin-bottom: 70px;" class="lead"></p>
         <p>
-            <a class="btn btn-lg btn-info" href="/order">간식 투표 차트</a>
+            <a style="display: none;" class="admin btn btn-lg btn-info" href="/total">간식 투표 차트</a>
         </p>
     </div>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
+</body>
+<script type="text/javascript" src="/js/adminChk.js"/></script>
+<script>
+    adminChk();
+</script>

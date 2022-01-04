@@ -15,6 +15,16 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <div class="row">
+        <div class="col-md-3">
+            <h3>간식 리스트</h3>
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <input type="text" id="name" name="name" class="form-control" placeholder="간식명을 입력하세요">
+            </div>
+        </div>
+    </div>
     <div id="card-row" class="row">
 
     </div>
@@ -22,48 +32,109 @@
 </div>
 </body>
 </html>
+<script type="text/javascript" src="/js/adminChk.js"/></script>
 <script>
         $.ajax({
             type: "GET",
             url: "/votePage/items",
             success : function(result){
-                console.log(result);
-                let snackName = "";
-                let snackImageSrc = "";
-                for(let i = 0; i < result.length; i++){
-                    snackName = result[i].name;
-                    snackImageSrc = result[i].filePath;
-                    snackId = result[i].id;
-                    if(snackImageSrc === null) {
-                        snackImageSrc = "/image/default.png";
-                    }
-
-                    $("#card-row").append(
-                            "<div class='col-4'>"+
-                                "<div class='card'>"+
-                                    "<input type=hidden id='snack-id' name='snack-id' >"+
-                                    "<div class='card-header'>"+
-                                        snackName+
-                                    "</div>"+
-                                    "<img src="+ snackImageSrc +" alt='과자' />"+
-                                    "<div class='card-body'>"+
-                                        "<a href='#' class='btn btn-primary'>투표하기</a>"+
-                                        "<a href='#' id='delete' style='float:right' class='btn btn-danger' onclick=delete_snack(this)>삭제</a>"+
-                                        "<a href='#' id='modify' style='float:right' class='btn btn-success'>수정</a>"+
-                                    "</div>"+
-                                "</div>"+
-                            "</div>");
-                    $("input[name=snack-id]").eq(i).val(snackId);
-                }
+                init_snack_list(result);
             },
             error : function(a, b, c){
                 alert(a + b + c);
             }
         });
 
+       $("#name").keydown(function(key) {
+            let searchSnackName = $("#name").val();
+            if (key.keyCode == 13) {
+                $.ajax({
+                    type: "GET",
+                    url: "/votePage/search/items",
+                    data : { name : searchSnackName},
+                    success : function(result){
+                        $("#card-row").empty();
+                        init_snack_list(result);
+                    },
+                    error : function(a, b, c){
+                        alert(a + b + c);
+                    }
+                });
+            }
+        });
+
+        function insert_vote(id) {
+            let a = id.parentNode.parentNode;
+            let snack_id = $(a).find("#snack-id").val();
+            $.ajax({
+                type: "POST",
+                url: "/votePage/insert/vote",
+                data: { id : snack_id },
+                success : function(result){
+
+                },
+                error : function(a, b, c){
+                    alert(a + b + c);
+                }
+            });
+        }
+
+        function update_snack_page(id) {
+            let a = id.parentNode.parentNode;
+            let snack_id = $(a).find("#snack-id").val();
+            location.href = "items/"+snack_id+"/edit";
+        }
+
         function delete_snack(id) {
             let a = id.parentNode.parentNode;
-            let snackid = $(a).find("#snack-id").val();
-            console.log(snackid);
+            let snack_id = $(a).find("#snack-id").val();
+            $.ajax({
+                type: "POST",
+                url: "/items/delete",
+                data: {id : snack_id},
+                success : function(result){
+                    let request = result.status;
+                    if(request === "OK") {
+                        location.replace('/votePage');
+                    } else {
+                        alert("error");
+                    }
+                },
+                error : function(a, b, c){
+                    alert(a + b + c);
+                }
+            });
+        }
+
+        function init_snack_list(result) {
+            console.log(result);
+            let snackName = "";
+            let snackImageSrc = "";
+            for(let i = 0; i < result.length; i++){
+                snackName = result[i].name;
+                snackImageSrc = result[i].filePath;
+                snackId = result[i].id;
+                if(snackImageSrc === null) {
+                    snackImageSrc = "/image/default.jpg";
+                }
+
+                $("#card-row").append(
+                        "<div class='col-4'>"+
+                            "<div class='card'>"+
+                                "<input type=hidden id='snack-id' name='snack-id' >"+
+                                "<div class='card-header'>"+
+                                    snackName+
+                                "</div>"+
+                                "<img src="+ snackImageSrc +" alt='과자' />"+
+                                "<div class='card-body'>"+
+                                    "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>"+
+                                    "<button type=button id='delete' style='display: none; float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>"+
+                                    "<button type=button id='modify' style='display: none; float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>"+
+                                "</div>"+
+                            "</div>"+
+                        "</div>");
+                $("input[name=snack-id]").eq(i).val(snackId);
+            }
+            adminChk();
         }
 </script>

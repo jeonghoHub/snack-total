@@ -13,8 +13,8 @@ import java.util.Map;
 public class LoginRepository {
     private final EntityManager em;
 
-    public User findOne(Long id) {
-        return em.find(User.class, id);
+    public User findOne(String UserId) {
+        return em.find(User.class, UserId);
     }
 
     public List<User> login(User user){

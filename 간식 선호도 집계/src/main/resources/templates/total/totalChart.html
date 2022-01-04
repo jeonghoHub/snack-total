@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+<head th:replace="fragments/header :: header"/>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>
+<script>
+var dataArray = [];
+var nameArray = [];
+    $.ajax({
+        type: "GET",
+        url: "/total/list",
+        async: false,
+        success : function(result){
+            for(let i = 0; i < result.length; i++) {
+                dataArray.push(result[i][0]);
+                nameArray.push(result[i][1]);
+
+            }
+        },
+        error : function(a, b, c){
+            alert(a + b + c);
+        }
+    })
+
+var chartArea = document.getElementById('myChart').getContext('2d');
+
+var myChart = new Chart(chartArea, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: nameArray,
+
+        datasets: [{
+
+            label: '1월 간식 선호도 통계',
+
+            data: dataArray,
+
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+
+            borderColor: 'rgba(255, 99, 132, 1)',
+
+            borderWidth: 1
+        }]
+    },
+    // ⑩차트의 설정(Object)
+    options: {
+        // ⑪축에 관한 설정(Object)
+        scales: {
+            // ⑫y축에 대한 설정(Object)
+            y: {
+                // ⑬시작을 0부터 하게끔 설정(최소값이 0보다 크더라도)(boolean)
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+</script>

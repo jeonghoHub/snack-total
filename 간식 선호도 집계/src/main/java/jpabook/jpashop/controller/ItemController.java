@@ -1,8 +1,5 @@
 package jpabook.jpashop.controller;
 
-
-import jpabook.jpashop.domain.item.Book;
-import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.snackDomain.SnackItem;
 import lombok.RequiredArgsConstructor;
@@ -56,14 +53,6 @@ public class ItemController {
         return new ResponseEntity<>(message, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/items")
-    public String list(Model model) {
-        List<SnackItem> items = itemService.findItems();
-        model.addAttribute("items", items);
-
-        return "items/itemList";
-    }
-
     @GetMapping("items/{itemId}/edit")
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model){
         SnackItem item = itemService.findOne(itemId);
@@ -77,10 +66,20 @@ public class ItemController {
     }
 
     @PostMapping("items/{itemId}/edit")
-    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") SnackItemForm form) {
+    public String updateItem(@RequestParam("file") MultipartFile files, @PathVariable Long itemId, @ModelAttribute("form") SnackItemForm form) {
 
-        itemService.updateItem(itemId, form.getName());
-        return "redirect:/items";
+        System.out.println("fileInfo>>>>>>>>>>>>>>" + files);
+        String baseDir = "C:\\Users\\abc\\Desktop\\github간식 선호도 프로젝트\\간식 선호도 집계\\src\\main\\resources\\static\\image";
+        String uplodadfilePath = baseDir + "\\" + files.getOriginalFilename();
+        String showFilePath = "/image/"+files.getOriginalFilename();
+        try {
+            files.transferTo(new File(uplodadfilePath));
+        } catch (IOException e) {
+            showFilePath = null;
+        }
+        itemService.updateItem(itemId, form.getName(), showFilePath);
+
+        return "redirect:/votePage";
     }
 
     @RequestMapping("/items/delete")

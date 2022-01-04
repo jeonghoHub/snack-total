@@ -55,6 +55,7 @@ public class LoginController {
             message.setMessage("성공코드");
             HttpSession session = request.getSession();
             session.setAttribute("userId", login.get(0).getId());
+            session.setAttribute("adminChk", login.get(0).getAdmin_chk());
         } catch (Exception e) {
             message.setStatus(StatusEnum.BAD_REQUEST);
             message.setMessage("실패코드");
@@ -68,5 +69,14 @@ public class LoginController {
         session.invalidate();
         response.sendRedirect("/login");
         return "login";
+    }
+
+    @RequestMapping("/api/adminChk")
+    public ResponseEntity<?> adminChk(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String userId = (String) session.getAttribute("userId");
+        User userInfo = loginService.findOne(userId);
+        System.out.println(">>>>>>>>>>>>>>"+userInfo);
+        return ResponseEntity.ok(userInfo);
     }
 }

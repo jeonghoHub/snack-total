@@ -20,7 +20,7 @@
             <div>
                 <div class="custom-file" id="inputFile">
                     <input name="file" type="file" class="custom-file-input" id="customFile">
-                    <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요.</label>
+                    <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요. (파일명 한글x)</label>
                 </div>
             </div>
         </div>
@@ -31,11 +31,17 @@
 </div> <!-- /container -->
 </body>
 <script>
+    var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
     $(".custom-file-input").on("change", function() {
       var fileName = $(this).val().split("\\").pop();
       let fileLength = fileName.length;
       let fileDot = fileName.lastIndexOf(".");
       let fileType = fileName.substring(fileDot+1, fileLength).toLowerCase();
+      if(check.test(fileName)) {
+        alert("한글 파일명은 첨부할 수 없습니다.");
+        $('#customFile').val('');
+        return false;
+      }
       if(fileType === "jpg" || fileType === "png" ) {
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
       } else {
