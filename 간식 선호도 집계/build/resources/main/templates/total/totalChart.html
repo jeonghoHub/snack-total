@@ -10,7 +10,7 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
-    <canvas id="myChart" width="400" height="200"></canvas>
+    <canvas id="myChart" width="400" height="240"></canvas>
 
     <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
@@ -62,7 +62,7 @@ var myChart = new Chart(chartArea, {
     options: {
         // ⑪축에 관한 설정(Object)
         scales: {
-            // ⑫y축에 대한 설정(Object)
+            // ⑫y축에 대한 설정(Object)0-[<p>0</p>
             y: {
                 // ⑬시작을 0부터 하게끔 설정(최소값이 0보다 크더라도)(boolean)
                 beginAtZero: true

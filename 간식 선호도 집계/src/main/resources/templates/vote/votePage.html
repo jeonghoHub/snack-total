@@ -34,6 +34,9 @@
 </html>
 <script type="text/javascript" src="/js/adminChk.js"/></script>
 <script>
+var monthVoteCheck = new Boolean();
+month_vote_check();
+
         $.ajax({
             type: "GET",
             url: "/votePage/items",
@@ -64,14 +67,19 @@
         });
 
         function insert_vote(id) {
-            let a = id.parentNode.parentNode;
+            if(!monthVoteCheck){
+                alert("이번달은 이미 투표하셨습니다.");
+                return false;
+            }
+            let a = id.parentNode.parentNode.parentNode.parentNode;
             let snack_id = $(a).find("#snack-id").val();
             $.ajax({
                 type: "POST",
                 url: "/votePage/insert/vote",
                 data: { id : snack_id },
                 success : function(result){
-
+                    alert("투표 완료되었습니다.");
+                    month_vote_check();
                 },
                 error : function(a, b, c){
                     alert(a + b + c);
@@ -80,13 +88,13 @@
         }
 
         function update_snack_page(id) {
-            let a = id.parentNode.parentNode;
+            let a = id.parentNode.parentNode.parentNode.parentNode;
             let snack_id = $(a).find("#snack-id").val();
             location.href = "items/"+snack_id+"/edit";
         }
 
         function delete_snack(id) {
-            let a = id.parentNode.parentNode;
+            let a = id.parentNode.parentNode.parentNode.parentNode;
             let snack_id = $(a).find("#snack-id").val();
             $.ajax({
                 type: "POST",
@@ -107,7 +115,6 @@
         }
 
         function init_snack_list(result) {
-            console.log(result);
             let snackName = "";
             let snackImageSrc = "";
             for(let i = 0; i < result.length; i++){
@@ -123,7 +130,7 @@
                             "<div class='card'>"+
                                 "<input type=hidden id='snack-id' name='snack-id' >"+
                                 "<div class='card-header'>"+
-                                    snackName+
+                                    "<strong>"+snackName+"<strong>"+
                                 "</div>"+
                                 "<img src="+ snackImageSrc +" alt='과자' />"+
                                 "<div class='card-body'>"+
@@ -136,5 +143,23 @@
                 $("input[name=snack-id]").eq(i).val(snackId);
             }
             adminChk();
+        }
+
+        function month_vote_check() {
+            $.ajax({
+                type: "GET",
+                url: "/votePage/monthVoteChk",
+                async: false,
+                success : function(result){
+                    if(result > 0) {
+                        monthVoteCheck = false;
+                    } else {
+                        monthVoteCheck = true;
+                    }
+                },
+                error : function(a, b, c){
+                    alert(a + b + c);
+                }
+            });
         }
 </script>

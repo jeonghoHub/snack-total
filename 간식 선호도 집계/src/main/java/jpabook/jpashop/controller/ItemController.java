@@ -34,16 +34,19 @@ public class ItemController {
     public ResponseEntity<Message> create(@RequestParam("file") MultipartFile files, SnackItemForm form) throws IOException {
         Message message = new Message();
         HttpHeaders headers = new HttpHeaders();
-        System.out.println("fileInfo>>>>>>>>>>>>>>" + files);
         String baseDir = "C:\\Users\\abc\\Desktop\\github간식 선호도 프로젝트\\간식 선호도 집계\\src\\main\\resources\\static\\image";
         String filePath = baseDir + "\\" + files.getOriginalFilename();
+        System.out.println("@@@@@@@@@@@@@@@@  >>> " + files.getOriginalFilename());
         SnackItem item = new SnackItem();
         item.setName(form.getName());
         try {
             files.transferTo(new File(filePath));
-            item.setFilePath("/image/"+files.getOriginalFilename());
         } catch (IOException e) {
-
+            if(files.getOriginalFilename().equals("")){
+                item.setFilePath(null);
+            } else {
+                item.setFilePath("/image/"+files.getOriginalFilename());
+            }
         }
         itemService.saveItem(item);
 
@@ -76,6 +79,8 @@ public class ItemController {
             files.transferTo(new File(uplodadfilePath));
         } catch (IOException e) {
             showFilePath = null;
+        } finally {
+            showFilePath = "/image/"+files.getOriginalFilename();
         }
         itemService.updateItem(itemId, form.getName(), showFilePath);
 

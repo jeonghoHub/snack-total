@@ -1,5 +1,6 @@
 package jpabook.jpashop.controller;
 
+import jpabook.jpashop.repository.TotalRepository;
 import jpabook.jpashop.service.TotalService;
 import jpabook.jpashop.snackDomain.SnackTotal;
 import lombok.RequiredArgsConstructor;
@@ -26,4 +27,5 @@ public class TotalController {
         List<Map<Object, String>> snackTotals = totalService.snackTotals();
         return ResponseEntity.ok(snackTotals);
     }
+
 }

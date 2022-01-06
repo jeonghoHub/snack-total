@@ -1,4 +1,4 @@
-package jpabook.jpashop.controller;
+package jpabook.jpashop.viewController;
 
 import jpabook.jpashop.service.LoginService;
 import lombok.Getter;

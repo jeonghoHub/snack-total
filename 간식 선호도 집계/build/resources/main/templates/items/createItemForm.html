@@ -57,27 +57,27 @@
             alert("간식명을 입력해주세요.");
         } else {
             $.ajax({
-            type: "POST",
-            url: "/items/new",
-            processData: false,
-            contentType: false,
-            enctype: 'multipart/form-data',
-            data : new FormData($("#form")[0]),
-            success : function(result){
-                console.log(result);
-                let request = result.status;
-                if(request === "OK") {
-                    alert("간식 등록이 정상적으로 되었습니다");
-                    $("#name").val('');
-                    $("#customFile").val('');
-                    $(".custom-file-label").html('jpg,png 파일을 선택해 주세요.');
-                } else {
+                type: "POST",
+                url: "/items/new",
+                processData: false,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                data : new FormData($("#form")[0]),
+                success : function(result){
+                    console.log(result);
+                    let request = result.status;
+                    if(request === "OK") {
+                        alert("간식 등록이 정상적으로 되었습니다");
+                        $("#name").val('');
+                        $("#customFile").val('');
+                        $(".custom-file-label").html('jpg,png 파일을 선택해 주세요.');
+                    } else {
+                        alert("error");
+                    }
+                },
+                error : function(a, b, c) {
                     alert("error");
                 }
-            },
-            error : function(a, b, c) {
-                alert("error");
-            }
             })
         }
     })

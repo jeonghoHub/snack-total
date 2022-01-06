@@ -38,7 +38,8 @@ public class TotalRepository {
                 "st.snack_id = si.snack_id " +
                 "and date_format(created_date, '%Y-%m') = '2022-01' " +
                 "group by " +
-                "st.snack_id");
+                "st.snack_id " +
+                 "order by count desc");
         List result = query.getResultList();
          return result;
     }

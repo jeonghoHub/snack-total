@@ -1,6 +1,7 @@
 package jpabook.jpashop.controller;
 
 
+import jpabook.jpashop.repository.VoteRepository;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.service.TotalService;
 import jpabook.jpashop.snackDomain.SnackItem;
@@ -29,6 +30,7 @@ public class VoteController {
 
     private final ItemService itemService;
     private final TotalService totalService;
+    private final VoteRepository voteRepository;
 
     @GetMapping("/votePage")
     public String createForm() {
@@ -74,4 +76,12 @@ public class VoteController {
         return ResponseEntity.ok("123");
     }
 
+    @GetMapping("/votePage/monthVoteChk")
+    public ResponseEntity<?>  monthVoteCheck(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String userId = (String) session.getAttribute("userId");
+        Long count = voteRepository.thisMonthSnackChk(userId);
+        System.out.println(">>>>>>>>COUNT>>>>>>" + count);
+        return ResponseEntity.ok(count);
+    }
 }
