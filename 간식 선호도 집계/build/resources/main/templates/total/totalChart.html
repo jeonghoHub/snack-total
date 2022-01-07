@@ -35,6 +35,10 @@ var nameArray = [];
         }
     })
 
+var now = new Date();
+var month = now.getMonth();
+month++;
+
 var chartArea = document.getElementById('myChart').getContext('2d');
 
 var myChart = new Chart(chartArea, {
@@ -47,7 +51,7 @@ var myChart = new Chart(chartArea, {
 
         datasets: [{
 
-            label: '1월 간식 선호도 통계',
+            label: month+"월 통계",
 
             data: dataArray,
 

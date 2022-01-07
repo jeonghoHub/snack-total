@@ -41,6 +41,7 @@ public class ItemController {
         item.setName(form.getName());
         try {
             files.transferTo(new File(filePath));
+            item.setFilePath("/image/"+files.getOriginalFilename());
         } catch (IOException e) {
             if(files.getOriginalFilename().equals("")){
                 item.setFilePath(null);

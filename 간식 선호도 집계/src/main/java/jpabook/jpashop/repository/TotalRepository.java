@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,9 @@ public class TotalRepository {
     }
 
     public List<Map<Object, String>> totalSnackTotals () {
+        LocalDate currentDate = LocalDate.now();
+        String yearMonth = currentDate.toString().substring(0,7);
+
          Query query = em.createNativeQuery("select " +
                 "count(st.snack_id) as count, " +
                 "si.name " +
@@ -36,11 +40,11 @@ public class TotalRepository {
                 "join snack_item si " +
                 "on " +
                 "st.snack_id = si.snack_id " +
-                "and date_format(created_date, '%Y-%m') = '2022-01' " +
+                "and date_format(created_date, '%Y-%m') = :yearMonth " +
                 "group by " +
                 "st.snack_id " +
                  "order by count desc");
-        List result = query.getResultList();
+        List result = query.setParameter("yearMonth", yearMonth).getResultList();
          return result;
     }
 }

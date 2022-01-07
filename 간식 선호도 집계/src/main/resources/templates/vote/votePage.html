@@ -10,6 +10,10 @@
       width: 368px;
       height: 300px;
       object-fit: cover;
+      padding : 28px;
+    }
+    .card {
+        border: 2px solid brown;
     }
 </style>
 <body>
@@ -71,7 +75,8 @@ month_vote_check();
                 alert("이번달은 이미 투표하셨습니다.");
                 return false;
             }
-            let a = id.parentNode.parentNode.parentNode.parentNode;
+            let a = id.parentNode.parentNode;
+            console.log(a);
             let snack_id = $(a).find("#snack-id").val();
             $.ajax({
                 type: "POST",
@@ -88,13 +93,14 @@ month_vote_check();
         }
 
         function update_snack_page(id) {
-            let a = id.parentNode.parentNode.parentNode.parentNode;
+            let a = id.parentNode.parentNode;
+            console.log(a);
             let snack_id = $(a).find("#snack-id").val();
             location.href = "items/"+snack_id+"/edit";
         }
 
         function delete_snack(id) {
-            let a = id.parentNode.parentNode.parentNode.parentNode;
+            let a = id.parentNode.parentNode;
             let snack_id = $(a).find("#snack-id").val();
             $.ajax({
                 type: "POST",
@@ -129,9 +135,6 @@ month_vote_check();
                         "<div class='col-4'>"+
                             "<div class='card'>"+
                                 "<input type=hidden id='snack-id' name='snack-id' >"+
-                                "<div class='card-header'>"+
-                                    "<strong>"+snackName+"<strong>"+
-                                "</div>"+
                                 "<img src="+ snackImageSrc +" alt='과자' />"+
                                 "<div class='card-body'>"+
                                     "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>"+

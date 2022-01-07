@@ -5,6 +5,7 @@
         crossorigin="anonymous">
 </script>
 <style>
+* { font-family: 'Spoqa Han Sans Neo', 'sans-serif'; }
     .btn {
         width: 250px;
     }
@@ -12,11 +13,12 @@
 <head th:replace="fragments/header :: header">
     <title>Hello</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
-    <div class="jumbotron">
+    <div style="text-align: center;">
         <h1>Sweet snack</h1>
         <p style="margin-bottom: 70px;" class="lead"></p>
         <p>
