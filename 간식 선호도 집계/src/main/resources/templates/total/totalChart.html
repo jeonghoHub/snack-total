@@ -5,15 +5,23 @@
         crossorigin="anonymous">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+<style>
+    * {
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    }
+    #total-container {
+      padding-bottom: 0px;
+    }
+</style>
 <head th:replace="fragments/header :: header"/>
 <body>
-<div class="container">
+<div id="total-container" class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-
+    <h3>이번달 Top10 간식</h3>
     <canvas id="myChart" width="400" height="240"></canvas>
-
-    <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
+<div th:replace="fragments/footer :: footer"/>
 </body>
 </html>
 <script>

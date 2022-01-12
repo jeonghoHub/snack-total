@@ -5,15 +5,27 @@
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
         crossorigin="anonymous">
 </script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 <style>
+    * {
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    }
     img {
-      width: 368px;
-      height: 300px;
+      width: 360px;
+      height: 275px;
       object-fit: cover;
       padding : 28px;
     }
     .card {
         border: 2px solid brown;
+    }
+    .col-md-4 {
+        padding-bottom : 15px;
+    }
+    h5 {
+        border-top : 2px solid brown;
+        margin-left: 25px;
+        margin-right: 25px;
     }
 </style>
 <body>
@@ -32,7 +44,9 @@
     <div id="card-row" class="row">
 
     </div>
-    <div th:replace="fragments/footer :: footer"/>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+<div style="padding-bottom: 1px;">
 </div>
 </body>
 </html>
@@ -121,31 +135,42 @@ month_vote_check();
         }
 
         function init_snack_list(result) {
-            let snackName = "";
-            let snackImageSrc = "";
-            for(let i = 0; i < result.length; i++){
-                snackName = result[i].name;
-                snackImageSrc = result[i].filePath;
-                snackId = result[i].id;
-                if(snackImageSrc === null) {
-                    snackImageSrc = "/image/default.jpg";
-                }
-
+            if(result.length === 0) {
+                $(".row").css('justify-content', 'center');
                 $("#card-row").append(
-                        "<div class='col-4'>"+
-                            "<div class='card'>"+
-                                "<input type=hidden id='snack-id' name='snack-id' >"+
-                                "<img src="+ snackImageSrc +" alt='과자' />"+
-                                "<div class='card-body'>"+
-                                    "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>"+
-                                    "<button type=button id='delete' style='display: none; float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>"+
-                                    "<button type=button id='modify' style='display: none; float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>"+
+                    "<img src= '/image/deadcookie.png' alt='과자' />" +
+                    "<h1>" + '"' + $('#name').val() + '" 이라는 키워드가 들어가는 간식은 존재하지 않습니다.' + "</h1>"
+                );
+                return;
+            } else {
+                $(".row").css('justify-content', '');
+                let snackName = "";
+                let snackImageSrc = "";
+                for(let i = 0; i < result.length; i++){
+                    snackName = result[i].name;
+                    snackImageSrc = result[i].filePath;
+                    snackId = result[i].id;
+                    if(snackImageSrc === null) {
+                        snackImageSrc = "/image/default.png";
+                    }
+
+                    $("#card-row").append(
+                            "<div class='col-md-4'>"+
+                                "<div class='card'>"+
+                                    "<input type=hidden id='snack-id' name='snack-id' >"+
+                                    "<img src="+ snackImageSrc +" alt='과자' />"+
+                                    "<h5>" + snackName + "</h5>"+
+                                    "<div class='card-body'>"+
+                                        "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>"+
+                                        "<button type=button id='delete' style='display: none; float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>"+
+                                        "<button type=button id='modify' style='display: none; float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>"+
+                                    "</div>"+
                                 "</div>"+
-                            "</div>"+
-                        "</div>");
-                $("input[name=snack-id]").eq(i).val(snackId);
+                            "</div>");
+                    $("input[name=snack-id]").eq(i).val(snackId);
+                }
+                adminChk();
             }
-            adminChk();
         }
 
         function month_vote_check() {

@@ -15,6 +15,8 @@ public class SnackItem {
 
     private String name;
 
+    private String cateGory;
+
     private String origFilename;
 
     private String filename;

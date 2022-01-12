@@ -22,10 +22,21 @@ body {
 }
 /* Custom page footer */
 .footer {
+ margin-left : 360px;
+ margin-right : 360px;
  padding-top: 19px;
  color: #777;
- border-top: 1px solid #e5e5e5;
+ border-bottom: 2px solid brown;
+ position : relative;
+ transform : translateY(-100%);
 }
+
+.container {
+  height: auto;
+  min-height: 100%;
+  padding-bottom: 100px;
+ }
+
 /* Customize container */
 @media (min-width: 768px) {
  .container {

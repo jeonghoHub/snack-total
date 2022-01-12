@@ -1,42 +1,163 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--<head th:replace="fragments/header :: header" />-->
 <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
         crossorigin="anonymous">
 </script>
-<head th:replace="fragments/header :: header" />
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+<style>
+    img {
+      width: 360px;
+      height: 275px;
+      object-fit: cover;
+      padding : 28px;
+    }
+    .card {
+        border: 2px solid brown !important;
+    }
+    * {
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    }
+    #form {
+        width: 60%;
+    }
+    .form-div{
+        display: flex;
+        justify-content: center;
+    }
+    #submit {
+        width: 15%;
+        height: 40px;
+    }
+    #success-span {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+        color: green;
+        display: none;
+    }
+    #fail-span {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+        color: red;
+        display: none;
+    }
+
+    .text-container {
+        width: 88%;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+    h5 {
+        border-top : 2px solid brown;
+        margin-left: 25px !important;
+        margin-right: 25px !important;
+    }
+    .container {
+        padding-bottom : 0px !important;
+    }
+</style>
+<head th:replace="fragments/header :: header"/>
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <h3>간식 등록</h3>
-    <form id="form" th:action="@{/items/new}" th:object="${form}" method="post" onsubmit="return false">
-        <div class="form-group">
-            <label th:for="name"><strong>간식명</strong></label>
-            <input type="text" th:field="*{name}" class="form-control"
-                   placeholder="간식명을 입력하세요">
-        </div>
-        <div class="form-group">
-            <label for="inputFile"><strong>간식 사진 파일</strong><span style="color: red;">(첨부 안하셔도 됩니다.)</span></label>
-            <div>
-                <div class="custom-file" id="inputFile">
-                    <input name="file" type="file" class="custom-file-input" id="customFile">
-                    <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요. (파일명 한글x)</label>
+    <div class="form-div">
+        <form id="form" th:action="@{/items/new}" th:object="${form}" method="post" onsubmit="return false">
+            <label th:for="name"><strong>간식명</strong><span style="color: red;">*</span></label>
+            <div class="input-group">
+                <div class="text-container">
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="간식명을 입력하세요">
+                    <span id="success-span">중복체크성공</span>
+                    <span id="fail-span">중복체크실패</span>
+                </div>
+                <div class="input-group-append">
+                    <button id="duplication-check-btn" class="btn btn-outline-secondary" type="button">중복체크</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputFile"><strong>간식 사진 파일</strong><span style="color: red;">(첨부 안하셔도 됩니다.)</span></label>
+                <div>
+                    <div class="custom-file" id="inputFile">
+                        <input name="file" type="file" class="custom-file-input" id="customFile">
+                        <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요. (파일명 한글x)</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="snack-image-div" style="padding-top: 40px;">
+        <h3 style="display: inline-block;">간식 카드 미리보기</h3><span>(처음 이미지는 기본 이미지입니다.)</span>
+        <div class="form-div mt-4">
+            <div class='col-md-4'>
+            <div class='card'>
+                <input type=hidden id='snack-id' name='snack-id' >
+                <div id="preview-image">
+                    <img src= '/image/default.png' alt='과자' />
+                </div>
+                <h5 id="preview-name"></h5>
+                <div class='card-body'>
+                    <button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>
+                    <button type=button id='delete' style='float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>
+                    <button type=button id='modify' style='float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <input id="submit" type="button" class="btn btn-primary" value="전송">
-    </form>
+        <input id="submit" style="float: right;" type="button" class="login100-form-btn" value="등록">
+    </div>
     <br/>
-    <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
+<div th:replace="fragments/footer :: footer" />
 </body>
 <script>
+    var duplicationCheck = 0;
+
+    $("#name").keyup(function() {
+        duplicationCheck = 0;
+        $("#success-span").hide();
+        $("#fail-span").hide();
+        $("#preview-name").text($('#name').val());
+    })
+
+    $("#duplication-check-btn").click(function() {
+        let name = $("#name").val();
+        if(name === "") {
+            alert("간식명을 입력해주세요.");
+        } else if(name != "") {
+            $.ajax({
+                type: "GET",
+                url: "/item/duplicationCheck",
+                data : { name : name },
+                success : function(result){
+                    if(result.data === "success") {
+                        duplicationCheck = 1;
+                        $("#success-span").show();
+                        $("#fail-span").hide();
+                    } else {
+                        duplicationCheck = 0;
+                        $("#success-span").hide();
+                        $("#fail-span").show();
+                    }
+                },
+                error : function(a, b, c) {
+                    alert("error");
+                }
+            })
+        }
+    })
+
     var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
     $(".custom-file-input").on("change", function() {
       var fileName = $(this).val().split("\\").pop();
       let fileLength = fileName.length;
       let fileDot = fileName.lastIndexOf(".");
       let fileType = fileName.substring(fileDot+1, fileLength).toLowerCase();
+
       if(check.test(fileName)) {
         alert("한글 파일명은 첨부할 수 없습니다.");
         $('#customFile').val('');
@@ -44,6 +165,11 @@
       }
       if(fileType === "jpg" || fileType === "png" ) {
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        $("#preview-image").empty();
+        let imagePath = '/image/'+fileName;
+        $("#preview-image").append(
+            "<img src="+ imagePath +" alt='과자' />"
+        );
       } else {
         alert("jpg파일 및 png파일만 첨부 가능합니다.");
         $('#customFile').val('');
@@ -55,6 +181,11 @@
         let file = $("#customFile").val();
         if(name == "") {
             alert("간식명을 입력해주세요.");
+            return;
+        }
+        if(duplicationCheck === 0) {
+            alert("중복체크를 완료해주세요.");
+            return;
         } else {
             $.ajax({
                 type: "POST",
@@ -68,9 +199,7 @@
                     let request = result.status;
                     if(request === "OK") {
                         alert("간식 등록이 정상적으로 되었습니다");
-                        $("#name").val('');
-                        $("#customFile").val('');
-                        $(".custom-file-label").html('jpg,png 파일을 선택해 주세요.');
+                        location.href = '/items/new';
                     } else {
                         alert("error");
                     }

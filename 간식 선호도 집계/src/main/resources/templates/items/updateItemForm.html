@@ -4,32 +4,54 @@
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
         crossorigin="anonymous">
 </script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+<style>
+    * {
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    }
+    #form {
+        width: 60%;
+    }
+    #form-div{
+        display: flex;
+        justify-content: center;
+    }
+    #update,#delete {
+        width: 15%;
+        height: 24%;
+    }
+</style>
 <head th:replace="fragments/header :: header" />
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-    <form id="form" th:object="${form}" method="post" enctype="multipart/form-data">
-        <!-- id -->
-        <input type="hidden" th:field="*{id}" />
-        <div class="form-group">
-            <label th:for="name">간식명</label>
-            <input type="text" th:field="*{name}" class="form-control"
-                   placeholder="간식명을 입력해주세요" />
-        </div>
-        <div class="form-group">
-            <label for="inputFile"><strong>간식 사진 파일</strong><span style="color: red;">(첨부 안하셔도 됩니다.)</span></label>
-            <div>
-                <div class="custom-file" id="inputFile">
-                    <input name="file" type="file" class="custom-file-input" id="customFile">
-                    <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요. (파일명 한글x)</label>
+    <h3>간식 수정</h3>
+    <div id="form-div">
+        <form id="form" th:object="${form}" method="post" enctype="multipart/form-data">
+            <!-- id -->
+            <input type="hidden" th:field="*{id}" />
+            <div class="form-group">
+                <label th:for="name">간식명</label>
+                <input type="text" th:field="*{name}" class="form-control"
+                       placeholder="간식명을 입력해주세요" />
+            </div>
+            <div class="form-group">
+                <label for="inputFile"><strong>간식 사진 파일</strong><span style="color: red;">(첨부 안하셔도 됩니다.)</span></label>
+                <div>
+                    <div class="custom-file" id="inputFile">
+                        <input name="file" type="file" class="custom-file-input" id="customFile">
+                        <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요. (파일명 한글x)</label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <button id="update" type="button" class="btn btn-primary">수정</button>
-        <button id="delete" type="button" class="btn btn-danger">삭제</button>
-    </form>
-    <div th:replace="fragments/footer :: footer" />
+            <div style="display: flex; height: 100%;" class="button-div">
+                <button id="update" type="button" class="login100-form-btn">저장</button>
+                <button style="margin-left: 20px;" id="delete" type="button" class="login100-form-btn">삭제</button>
+            </div>
+        </form>
+    </div>
 </div> <!-- /container -->
+<div th:replace="fragments/footer :: footer" />
 </body>
 </html>
 <script>

@@ -43,7 +43,8 @@ public class TotalRepository {
                 "and date_format(created_date, '%Y-%m') = :yearMonth " +
                 "group by " +
                 "st.snack_id " +
-                 "order by count desc");
+                 "order by count desc " +
+                 "Limit 10");
         List result = query.setParameter("yearMonth", yearMonth).getResultList();
          return result;
     }

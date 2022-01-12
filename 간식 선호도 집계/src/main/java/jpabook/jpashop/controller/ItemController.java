@@ -1,8 +1,10 @@
 package jpabook.jpashop.controller;
 
+import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.snackDomain.SnackItem;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     @GetMapping("items/new")
     public String createForm(Model model) {
@@ -79,9 +82,11 @@ public class ItemController {
         try {
             files.transferTo(new File(uplodadfilePath));
         } catch (IOException e) {
-            showFilePath = null;
-        } finally {
-            showFilePath = "/image/"+files.getOriginalFilename();
+            if(files.getOriginalFilename().equals("")){
+                showFilePath = null;
+            } else {
+                showFilePath = "/image/"+files.getOriginalFilename();
+            }
         }
         itemService.updateItem(itemId, form.getName(), showFilePath);
 
@@ -98,6 +103,21 @@ public class ItemController {
 
         message.setStatus(StatusEnum.OK);
         message.setMessage("성공코드");
+
+        return new ResponseEntity<>(message, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/item/duplicationCheck")
+    public ResponseEntity<Message> duplication(SnackItemForm form) {
+        Message message = new Message();
+        HttpHeaders headers = new HttpHeaders();
+
+        try	{
+            SnackItem duplication = itemRepository.duplication(form.getName());
+            message.setData("fail");
+        } catch (EmptyResultDataAccessException e) {
+            message.setData("success");
+        }
 
         return new ResponseEntity<>(message, headers, HttpStatus.OK);
     }

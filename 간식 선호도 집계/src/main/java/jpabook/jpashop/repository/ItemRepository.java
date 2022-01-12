@@ -33,4 +33,10 @@ public class ItemRepository {
         SnackItem snackItem = em.find(SnackItem.class, itemId);
         em.remove(snackItem);
     }
+
+    public SnackItem duplication(String itemName) {
+        return em.createQuery("select s from SnackItem s where s.name = :name", SnackItem.class)
+                .setParameter("name",itemName)
+                .getSingleResult();
+    }
 }
