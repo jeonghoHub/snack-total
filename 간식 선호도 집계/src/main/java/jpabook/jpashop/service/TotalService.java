@@ -25,8 +25,8 @@ public class TotalService {
     }
 
     @Transactional
-    public List<SnackItem> searchSnack(String name) {
-        return totalRepository.searchSnack(name);
+    public List<SnackItem> searchSnack(String name, String category) {
+        return totalRepository.searchSnack(name, category);
     }
 
     @Transactional

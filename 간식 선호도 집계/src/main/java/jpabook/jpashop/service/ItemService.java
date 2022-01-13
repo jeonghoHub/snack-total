@@ -1,6 +1,5 @@
 package jpabook.jpashop.service;
 
-import jpabook.jpashop.controller.SnackItemForm;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.snackDomain.SnackItem;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,10 @@ public class ItemService {
     }
 
     @Transactional
-    public void updateItem(Long itemId, String name, String filePath) {
+    public void updateItem(Long itemId, String name, String category, String filePath) {
         SnackItem findItem = itemRepository.findOne(itemId);
         findItem.setName(name);
+        findItem.setCateGory(category);
         findItem.setFilePath(filePath);
     }
 

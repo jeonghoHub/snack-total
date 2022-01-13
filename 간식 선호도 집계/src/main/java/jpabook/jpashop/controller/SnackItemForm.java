@@ -11,5 +11,6 @@ import javax.validation.constraints.NotEmpty;
 public class SnackItemForm {
     private Long id;
     private String name;
-    private String sellImgUrl;
+    private String filePath;
+    private String category;
 }

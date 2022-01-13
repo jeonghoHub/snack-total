@@ -30,22 +30,28 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <h1 style="text-align: center;">메뉴</h1>
     <div class="row" style="padding-top: 10%; padding-left: 30px;">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <img class="image" src= '/image/homecookie.png' alt='과자' />
             <p>
                 <a class="btn btn-lg btn-secondary" href="/votePage">간식 리스트</a>
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <img class="image" src= '/image/homecookie.png' alt='과자' />
             <p>
                 <a style="display: none;" class="admin btn btn-lg btn-dark" href="/items/new">간식 등록</a>
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <img class="image" src= '/image/homecookie.png' alt='과자' />
             <p>
                 <a style="display: none;" class="admin btn btn-lg btn-info" href="/total">간식 투표 차트</a>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <img class="image" src= '/image/homecookie.png' alt='과자' />
+            <p>
+                <a style="display: none;" class="admin btn btn-lg btn-info" href="/total">개인 투표 조회</a>
             </p>
         </div>
     </div>

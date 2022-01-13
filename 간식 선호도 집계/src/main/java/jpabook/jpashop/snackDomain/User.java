@@ -20,4 +20,7 @@ public class User {
     private String password;
 
     private String admin_chk;
+
+    private String profile_img_path;
+
 }

@@ -42,6 +42,7 @@ public class ItemController {
         System.out.println("@@@@@@@@@@@@@@@@  >>> " + files.getOriginalFilename());
         SnackItem item = new SnackItem();
         item.setName(form.getName());
+        item.setCateGory(form.getCategory());
         try {
             files.transferTo(new File(filePath));
             item.setFilePath("/image/"+files.getOriginalFilename());
@@ -63,10 +64,12 @@ public class ItemController {
     @GetMapping("items/{itemId}/edit")
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model){
         SnackItem item = itemService.findOne(itemId);
+        System.out.println(">>>>>"+ item.getFilePath());
 
         SnackItemForm form = new SnackItemForm();
         form.setId(item.getId());
         form.setName(item.getName());
+        form.setCategory(item.getCateGory());
 
         model.addAttribute("form", form);
         return "items/updateItemForm";
@@ -88,7 +91,7 @@ public class ItemController {
                 showFilePath = "/image/"+files.getOriginalFilename();
             }
         }
-        itemService.updateItem(itemId, form.getName(), showFilePath);
+        itemService.updateItem(itemId, form.getName(), form.getCategory(), showFilePath);
 
         return "redirect:/votePage";
     }

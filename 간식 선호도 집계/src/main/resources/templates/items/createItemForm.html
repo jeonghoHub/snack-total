@@ -7,7 +7,7 @@
 </script>
 <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 <style>
-    img {
+    #snack-image-div img {
       width: 360px;
       height: 275px;
       object-fit: cover;
@@ -46,16 +46,18 @@
     }
 
     .text-container {
-        width: 88%;
+        width: 80%;
         display: inline-block;
         position: relative;
         overflow: hidden;
     }
-    h5 {
+
+    #preview-name-category{
         border-top : 2px solid brown;
         margin-left: 25px !important;
         margin-right: 25px !important;
     }
+
     .container {
         padding-bottom : 0px !important;
     }
@@ -70,7 +72,7 @@
             <label th:for="name"><strong>간식명</strong><span style="color: red;">*</span></label>
             <div class="input-group">
                 <div class="text-container">
-                    <input type="text" th:field="*{name}" class="form-control" placeholder="간식명을 입력하세요">
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="간식명을 입력하세요" maxlength='26'/>
                     <span id="success-span">중복체크성공</span>
                     <span id="fail-span">중복체크실패</span>
                 </div>
@@ -78,11 +80,21 @@
                     <button id="duplication-check-btn" class="btn btn-outline-secondary" type="button">중복체크</button>
                 </div>
             </div>
-
+            <label th:for="name"><strong>간식 카테고리</strong><span style="color: red;">*</span></label>
+            <select id="category" name="category" class="form-control" style="width: 80%;">
+                <option value="">선택해주세요</option>
+                <option value="과자">과자</option>
+                <option value="초콜릿">초콜릿</option>
+                <option value="파이">파이</option>
+                <option value="젤리">젤리</option>
+                <option value="젤리">사탕</option>
+                <option value="젤리">소시지</option>
+                <option value="젤리">기타</option>
+            </select>
             <div class="form-group">
                 <label for="inputFile"><strong>간식 사진 파일</strong><span style="color: red;">(첨부 안하셔도 됩니다.)</span></label>
                 <div>
-                    <div class="custom-file" id="inputFile">
+                    <div class="custom-file" id="inputFile" style="width: 90.5%;">
                         <input name="file" type="file" class="custom-file-input" id="customFile">
                         <label class="custom-file-label" for="customFile">jpg,png 파일을 선택해 주세요. (파일명 한글x)</label>
                     </div>
@@ -90,16 +102,16 @@
             </div>
         </form>
     </div>
-    <div id="snack-image-div" style="padding-top: 40px;">
+    <div id="snack-image-div">
         <h3 style="display: inline-block;">간식 카드 미리보기</h3><span>(처음 이미지는 기본 이미지입니다.)</span>
         <div class="form-div mt-4">
             <div class='col-md-4'>
             <div class='card'>
                 <input type=hidden id='snack-id' name='snack-id' >
-                <div id="preview-image">
-                    <img src= '/image/default.png' alt='과자' />
+                <img src="/image/default.png" id="preview" />
+                <div id="preview-name-category">
+                    <h5 id="preview-name"></h5>
                 </div>
-                <h5 id="preview-name"></h5>
                 <div class='card-body'>
                     <button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>
                     <button type=button id='delete' style='float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>
@@ -108,16 +120,18 @@
                 </div>
             </div>
         </div>
-        <input id="submit" style="float: right;" type="button" class="login100-form-btn" value="등록">
+        <input id="submit" style="z-index: 1000; position: relative; float: right;" type="button" class="login100-form-btn" value="등록">
     </div>
     <br/>
 </div> <!-- /container -->
 <div th:replace="fragments/footer :: footer" />
 </body>
+<script type="text/javascript" src="/js/adminChk.js"/></script>
 <script>
+    adminChk();
     var duplicationCheck = 0;
 
-    $("#name").keyup(function() {
+    $("#name").on('propertychange change keyup paste input',function() {
         duplicationCheck = 0;
         $("#success-span").hide();
         $("#fail-span").hide();
@@ -161,30 +175,37 @@
       if(check.test(fileName)) {
         alert("한글 파일명은 첨부할 수 없습니다.");
         $('#customFile').val('');
+        $("#preview").attr('src', '/image/default.png');
+        $(".custom-file-label").html("");
         return false;
       }
       if(fileType === "jpg" || fileType === "png" ) {
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        $("#preview-image").empty();
-        let imagePath = '/image/'+fileName;
-        $("#preview-image").append(
-            "<img src="+ imagePath +" alt='과자' />"
-        );
+        setImageFromFile(this);
       } else {
         alert("jpg파일 및 png파일만 첨부 가능합니다.");
-        $('#customFile').val('');
+         $('#customFile').val('');
+         $("#preview").attr('src', '/image/default.png');
+         $(".custom-file-label").html("");
+         return false;
       }
     });
 
     $("#submit").click(function() {
         let name = $("#name").val();
         let file = $("#customFile").val();
+        let category = $("#category").val();
+
         if(name == "") {
             alert("간식명을 입력해주세요.");
             return;
         }
         if(duplicationCheck === 0) {
             alert("중복체크를 완료해주세요.");
+            return;
+        }
+        if(category === "") {
+            alert("간식 카테고리를 선택해주세요.");
             return;
         } else {
             $.ajax({
@@ -210,5 +231,15 @@
             })
         }
     })
+
+    function setImageFromFile(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#preview").attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>
 </html>

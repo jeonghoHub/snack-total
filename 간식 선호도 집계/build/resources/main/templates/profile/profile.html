@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous">
+</script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+<style>
+    * {
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    }
+    #profile-div-img {
+        display : flex;
+        justify-content: center;
+    }
+    #profile-div-img img {
+        border-style: solid;
+        border-radius: 600px;
+        width: 150px;
+        height: 150px;
+    }
+    .form-div{
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-content: center;
+    }
+</style>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <h3 class="mb-5">프로필</h3>
+    <form id="form" method="post" onsubmit="return false">
+        <div class="form-div" style="margin-left: 60px;">
+            <label style="width:35%; font-size: 15px;" th:for="name"><strong>프로필 사진</strong></label>
+            <div id="profile-div-img" class="mb-3">
+                <img id="profile-img">
+                <input type="file" id="img-file" name="img-file" style="height: 30px;">
+            </div>
+        </div>
+        <div class="form-div">
+            <label th:for="name"><strong>이름</strong></label>
+            <div class="form-group" style="width: 35%;">
+                <div class="text-container">
+                    <input type="text"  id="name" name="name" class="form-control"  maxlength='25' readonly/>
+                </div>
+            </div>
+        </div>
+        <div class="form-div">
+            <label th:for="name"><strong>현재 비밀번호</strong><strong style="color: red;">(수정 시 필수 입니다.)</strong></label>
+            <div class="form-group" style="width: 35%;">
+                <div class="text-container">
+                    <input type="password" id="password" name="password" class="form-control"  maxlength='25'/>
+                </div>
+            </div>
+        </div>
+        <div class="form-div">
+            <label th:for="name"><strong>변경 비밀번호</strong></label>
+            <div class="form-group" style="width: 35%;">
+                <div class="text-container">
+                    <input type="password" id="newPassword" name="newPassword" class="form-control" maxlength='25'/>
+                </div>
+            </div>
+        </div>
+        <input id="submit" style="width: 15%; height:40px; float: right;" type="button" class="login100-form-btn" value="수정">
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+<script type="text/javascript" src="/js/adminChk.js"/></script>
+<script>
+    var userInfo = adminChk();
+    let userName = userInfo.name;
+    let userProfile_img_path = userInfo.profile_img_path;
+
+    $("#name").val(userName);
+
+    $("#profile-img").attr('src', userProfile_img_path);
+
+    $("#submit").click(function(){
+        let password = $("#password").val();
+        let newPassword = $("#newPassword").val();
+        if(password === "") {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+        let passwordChkVal = passwordChk(password, newPassword);
+
+        if(passwordChkVal === true) {
+            alert("비밀번호가 수정되었습니다.");
+            location.href = "profile";
+        } else {
+            alert("현재 비밀번호가 틀렸습니다.");
+        }
+    })
+
+    function passwordChk(password, newPassword) {
+        console.log($("#img-file").val());
+        let passwordChkBoolean = true;
+        $.ajax({
+            type: "POST",
+            url: "/profile/passwordChk",
+            async: false,
+            processData: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            data : new FormData($("#form")[0]),
+            success : function(result){
+                passwordChkBoolean = result.data;
+            },
+            error : function(a, b, c){
+                alert(a + b + c);
+            }
+        });
+        return passwordChkBoolean;
+    }
+
+
+    var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    $("#img-file").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      let fileLength = fileName.length;
+      let fileDot = fileName.lastIndexOf(".");
+      let fileType = fileName.substring(fileDot+1, fileLength).toLowerCase();
+
+      if(check.test(fileName)) {
+        alert("한글 파일명은 첨부할 수 없습니다.");
+        $('#img-file').val('');
+        $("#profile-img").attr('src', '/image/default.png');
+        return false;
+      }
+      if(fileType === "jpg" || fileType === "png" ) {
+        setImageFromFile(this);
+      } else {
+        alert("jpg파일 및 png파일만 첨부 가능합니다.");
+        $('#img-file').val('');
+        $("#profile-img").attr('src', '/image/default.png');
+        return false;
+      }
+    });
+
+    function setImageFromFile(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#profile-img").attr('src', e.target.result);
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+</script>

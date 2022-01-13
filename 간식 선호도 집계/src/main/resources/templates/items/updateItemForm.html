@@ -6,19 +6,59 @@
 </script>
 <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 <style>
+#snack-image-div img {
+      width: 360px;
+      height: 275px;
+      object-fit: cover;
+      padding : 28px;
+    }
+    .card {
+        border: 2px solid brown !important;
+    }
     * {
         font-family: 'Spoqa Han Sans Neo', 'sans-serif';
     }
     #form {
         width: 60%;
     }
-    #form-div{
+    .form-div{
         display: flex;
         justify-content: center;
     }
-    #update,#delete {
+    #update {
         width: 15%;
-        height: 24%;
+        height: 40px;
+    }
+    #success-span {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+        color: green;
+        display: none;
+    }
+    #fail-span {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+        color: red;
+        display: none;
+    }
+
+    .text-container {
+        width: 80%;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #preview-name-category{
+        border-top : 2px solid brown;
+        margin-left: 25px !important;
+        margin-right: 25px !important;
+    }
+
+    .container {
+        padding-bottom : 0px !important;
     }
 </style>
 <head th:replace="fragments/header :: header" />
@@ -26,15 +66,25 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <h3>간식 수정</h3>
-    <div id="form-div">
+    <div class="form-div">
         <form id="form" th:object="${form}" method="post" enctype="multipart/form-data">
             <!-- id -->
             <input type="hidden" th:field="*{id}" />
-            <div class="form-group">
-                <label th:for="name">간식명</label>
+            <div class="form-group" style="margin-bottom: 0px;">
+                <label th:for="name"><strong>간식명</strong></label>
                 <input type="text" th:field="*{name}" class="form-control"
-                       placeholder="간식명을 입력해주세요" />
+                       placeholder="간식명을 입력해주세요" style="width: 80%;" readonly/>
             </div>
+            <label th:for="name"><strong>간식 카테고리</strong><span style="color: red;">*</span></label>
+            <select th:field="*{category}" class="form-control" style="width: 80%;">
+                <option th:value="'과자'" th:text="과자"></option>
+                <option th:value="'초콜릿'" th:text="초콜릿"></option>
+                <option th:value="'파이'" th:text="파이"></option>
+                <option th:value="'젤리'" th:text="젤리"></option>
+                <option th:value="'사탕'" th:text="사탕"></option>
+                <option th:value="'소시지'" th:text="소시지"></option>
+                <option th:value="'기타'" th:text="기타"></option>
+            </select>
             <div class="form-group">
                 <label for="inputFile"><strong>간식 사진 파일</strong><span style="color: red;">(첨부 안하셔도 됩니다.)</span></label>
                 <div>
@@ -44,49 +94,77 @@
                     </div>
                 </div>
             </div>
-            <div style="display: flex; height: 100%;" class="button-div">
-                <button id="update" type="button" class="login100-form-btn">저장</button>
-                <button style="margin-left: 20px;" id="delete" type="button" class="login100-form-btn">삭제</button>
-            </div>
         </form>
+    </div>
+    <div id="snack-image-div">
+        <h3 style="display: inline-block;">간식 카드 미리보기</h3><span>(처음 이미지는 기본 이미지입니다.)</span>
+        <div class="form-div mt-4">
+            <div class='col-md-4'>
+                <div class='card'>
+                    <input type=hidden id='snack-id' name='snack-id' >
+                    <img src="/image/default.png" id="preview" />
+                    <div id="preview-name-category">
+                        <h5 id="preview-name"></h5>
+                    </div>
+                    <div class='card-body'>
+                        <button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>
+                        <button type=button id='delete' style='float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>
+                        <button type=button id='modify' style='float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input id="update" style="z-index: 1000; position: relative; float: right;" type="button" class="login100-form-btn" value="수정">
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments/footer :: footer" />
 </body>
 </html>
+<script type="text/javascript" src="/js/adminChk.js"/></script>
 <script>
-     $(".custom-file-input").on("change", function() {
-        var fileName = $(this).val().split("\\").pop();
-        let fileLength = fileName.length;
-        let fileDot = fileName.lastIndexOf(".");
-        let fileType = fileName.substring(fileDot+1, fileLength).toLowerCase();
-        if(fileType === "jpg" || fileType === "png" ) {
-          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        } else {
-          alert("jpg파일 및 png파일만 첨부 가능합니다.");
-          $('#customFile').val('');
-        }
+     adminChk();
+
+     let name = $("#name").val();
+
+     $("#preview-name").text(name);
+
+     var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      let fileLength = fileName.length;
+      let fileDot = fileName.lastIndexOf(".");
+      let fileType = fileName.substring(fileDot+1, fileLength).toLowerCase();
+
+      if(check.test(fileName)) {
+        alert("한글 파일명은 첨부할 수 없습니다.");
+        $('#customFile').val('');
+        $("#preview").attr('src', '/image/default.png');
+        $(".custom-file-label").html("");
+        return false;
+      }
+      if(fileType === "jpg" || fileType === "png" ) {
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        setImageFromFile(this);
+      } else {
+        alert("jpg파일 및 png파일만 첨부 가능합니다.");
+         $('#customFile').val('');
+         $("#preview").attr('src', '/image/default.png');
+         $(".custom-file-label").html("");
+         return false;
+      }
     });
+
     $("#update").click(function(){
         $("#form").submit();
     })
-    $("#delete").click(function(){
-        let queryString = $("#form").serialize();
-        $.ajax({
-            type: "POST",
-            url: "/items/delete",
-            data: queryString,
-            success : function(result){
-                let request = result.status;
-                if(request === "OK") {
-                    location.replace('/items');
-                } else {
-                    alert("error");
-                }
-            },
-            error : function(a, b, c){
-                alert(a + b + c);
+
+    function setImageFromFile(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#preview").attr('src', e.target.result);
             }
-        });
-    })
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>

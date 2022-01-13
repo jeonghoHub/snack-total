@@ -45,13 +45,13 @@ public class VoteController {
 
     @GetMapping("/votePage/search/items")
     public ResponseEntity<?> searchList(SnackItemForm snackItemForm) {
-        List<SnackItem> items = null;
+        List<SnackItem> items;
         System.out.println(">>>>>>>" + snackItemForm.getName());
         if(snackItemForm.getName().equals("")){
             items = itemService.findItems();
-        } else {
-            items = totalService.searchSnack(snackItemForm.getName());
         }
+        items = totalService.searchSnack(snackItemForm.getName(), snackItemForm.getCategory());
+
         return ResponseEntity.ok(items);
     }
 

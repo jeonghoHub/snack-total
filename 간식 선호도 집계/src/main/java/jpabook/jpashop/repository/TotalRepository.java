@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,10 +23,25 @@ public class TotalRepository {
         em.persist(snackTotal);
     }
 
-    public List<SnackItem> searchSnack (String name) {
-        return em.createQuery("select s from SnackItem s where s.name like concat('%',:name,'%') ORDER BY s.name", SnackItem.class)
-                .setParameter("name", name)
-                .getResultList();
+    public List<SnackItem> searchSnack (String name, String category) {
+        String jpql = "select s from SnackItem s where 1=1";
+
+        if(name != "" && name != null){
+            jpql += " and s.name like concat('%',:name,'%') ";
+        }
+        if(category != "" && category != null) {
+            jpql += " and s.cateGory = :category ";
+        }
+        TypedQuery<SnackItem> query = em.createQuery(jpql, SnackItem.class);
+
+        if(name != "" && name != null){
+            query = query.setParameter("name", name);
+        }
+        if(category != "" && category != null){
+            query = query.setParameter("category", category);
+        }
+
+        return query.getResultList();
     }
 
     public List<Map<Object, String>> totalSnackTotals () {
