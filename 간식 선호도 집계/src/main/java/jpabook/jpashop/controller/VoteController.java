@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,23 @@ public class VoteController {
     public String createForm() {
         return "vote/votePage";
     }
+
+    @GetMapping("/vote/userVotePage")
+    public String userVotePage() {
+        return "vote/userVotePage";
+    }
+
+    @GetMapping("/vote/userVoteList")
+    public ResponseEntity<?> userVoteList(HttpServletRequest request, voteListDto param) {
+        HttpSession session = request.getSession();
+        String userId = (String) session.getAttribute("userId");
+
+        List<HashMap<Object, String>> hashMaps;
+        hashMaps = voteRepository.userVoteList(userId, param.getYear(), param.getCategory(), param.getName());
+        System.out.println("!!@#!@#"+hashMaps);
+        return ResponseEntity.ok(hashMaps);
+    }
+
 
     @GetMapping("/votePage/items")
     public ResponseEntity<?> list() {

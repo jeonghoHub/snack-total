@@ -69,7 +69,8 @@
     <div class="form-div">
         <form id="form" th:object="${form}" method="post" enctype="multipart/form-data">
             <!-- id -->
-            <input type="hidden" th:field="*{id}" />
+            <input id="snack_id" type="hidden" th:field="*{id}" />
+            <input id="originalFileDivi" name="originalFileDivi" type="hidden" />
             <div class="form-group" style="margin-bottom: 0px;">
                 <label th:for="name"><strong>간식명</strong></label>
                 <input type="text" th:field="*{name}" class="form-control"
@@ -101,7 +102,6 @@
         <div class="form-div mt-4">
             <div class='col-md-4'>
                 <div class='card'>
-                    <input type=hidden id='snack-id' name='snack-id' >
                     <img src="/image/default.png" id="preview" />
                     <div id="preview-name-category">
                         <h5 id="preview-name"></h5>
@@ -128,8 +128,31 @@
 
      $("#preview-name").text(name);
 
+     $(function(){
+        let snack_id = $("#snack_id").val();
+        $.ajax({
+            type: "GET",
+            url: "/item/findOneItemInfo",
+            data : { snack_id : snack_id },
+            success : function(result){
+                if(result.filePath != null) {
+                    $("#preview").attr('src', result.filePath);
+                    $("#originalFileDivi").val(true);
+                } else {
+                    $("#originalFileDivi").val(false);
+                }
+            },
+            error : function(a, b, c) {
+                alert("error");
+            }
+        });
+     })
+
      var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
-    $(".custom-file-input").on("change", function() {
+     $(".custom-file-input").on("change", function() {
+
+     $("#originalFileDivi").val(false);
+
       var fileName = $(this).val().split("\\").pop();
       let fileLength = fileName.length;
       let fileDot = fileName.lastIndexOf(".");
@@ -142,9 +165,14 @@
         $(".custom-file-label").html("");
         return false;
       }
+
       if(fileType === "jpg" || fileType === "png" ) {
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         setImageFromFile(this);
+      } else if(fileType === "") {
+         $('#customFile').val('');
+         $("#preview").attr('src', '/image/default.png');
+         $(".custom-file-label").html("");
       } else {
         alert("jpg파일 및 png파일만 첨부 가능합니다.");
          $('#customFile').val('');

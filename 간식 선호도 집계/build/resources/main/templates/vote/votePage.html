@@ -7,6 +7,9 @@
 </script>
 <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
 <style>
+    #nosearch-img {
+        width: 300px;
+    }
     * {
         font-family: 'Spoqa Han Sans Neo', 'sans-serif';
     }
@@ -50,7 +53,7 @@
         </div>
         <div class="col-md-7">
             <div class="form-group">
-                <input type="text" id="name" name="name" class="form-control" placeholder="간식명을 입력하세요">
+                <input type="text" id="name" name="name" class="form-control" placeholder="간식명을 입력하세요" maxlength="30">
             </div>
         </div>
     </div>
@@ -160,10 +163,10 @@ month_vote_check();
 
         function init_snack_list(result) {
             if(result.length === 0) {
-                $(".row").css('justify-content', 'center');
+                $(".row").css('align-items', 'center');
                 $("#card-row").append(
-                    "<img src= '/image/deadcookie.png' alt='과자' />" +
-                    "<h1>" + '"' + $('#name').val() + '" 이라는 키워드가 들어가는 간식은 존재하지 않습니다.' + "</h1>"
+                    "<img id='nosearch-img' src='/image/deadcookie.png' alt='과자' />" +
+                    "<h1> 검색 결과가 존재하지 않습니다. </h1>"
                 );
                 return;
             } else {

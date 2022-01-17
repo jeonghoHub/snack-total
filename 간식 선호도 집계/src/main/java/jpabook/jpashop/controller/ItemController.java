@@ -3,6 +3,7 @@ package jpabook.jpashop.controller;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.snackDomain.SnackItem;
+import jpabook.jpashop.snackDomain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -76,22 +79,30 @@ public class ItemController {
     }
 
     @PostMapping("items/{itemId}/edit")
-    public String updateItem(@RequestParam("file") MultipartFile files, @PathVariable Long itemId, @ModelAttribute("form") SnackItemForm form) {
+    public String updateItem(@RequestParam("file") MultipartFile files,
+                             @PathVariable Long itemId,
+                             @ModelAttribute("form") SnackItemForm form,
+                             @RequestParam(name = "originalFileDivi") Boolean originalFileDivi) {
 
-        System.out.println("fileInfo>>>>>>>>>>>>>>" + files);
+        System.out.println("fileInfo>>>>>>>>>>>>>>" + originalFileDivi);
+        System.out.println("fileInfo>>>>>>>>>>>>>>" + files.getOriginalFilename());
         String baseDir = "C:\\Users\\abc\\Desktop\\github간식 선호도 프로젝트\\간식 선호도 집계\\src\\main\\resources\\static\\image";
         String uplodadfilePath = baseDir + "\\" + files.getOriginalFilename();
         String showFilePath = "/image/"+files.getOriginalFilename();
         try {
+            //이미 동일한 파일이 존재하면 Exception발생
             files.transferTo(new File(uplodadfilePath));
         } catch (IOException e) {
+            //catch 후 이미지 경로 컬럼에만 해당이미지 경로 값 세팅
             if(files.getOriginalFilename().equals("")){
-                showFilePath = null;
+                if(!originalFileDivi) {
+                    showFilePath = null;
+                }
             } else {
                 showFilePath = "/image/"+files.getOriginalFilename();
             }
         }
-        itemService.updateItem(itemId, form.getName(), form.getCategory(), showFilePath);
+        itemService.updateItem(itemId, form.getName(), form.getCategory(), showFilePath, originalFileDivi);
 
         return "redirect:/votePage";
     }
@@ -123,5 +134,13 @@ public class ItemController {
         }
 
         return new ResponseEntity<>(message, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/item/findOneItemInfo")
+    public ResponseEntity<?> findOneUser(@RequestParam(name="snack_id") Long snack_id) {
+
+        SnackItem one = itemRepository.findOne(snack_id);
+
+        return ResponseEntity.ok(one);
     }
 }

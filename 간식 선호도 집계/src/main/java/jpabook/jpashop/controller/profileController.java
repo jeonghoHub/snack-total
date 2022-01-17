@@ -1,6 +1,9 @@
 package jpabook.jpashop.controller;
 
+import jpabook.jpashop.repository.ItemRepository;
+import jpabook.jpashop.repository.LoginRepository;
 import jpabook.jpashop.repository.profileRepository;
+import jpabook.jpashop.snackDomain.SnackItem;
 import jpabook.jpashop.snackDomain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class profileController {
     private final profileRepository profileRepository;
+    private final LoginRepository loginRepository;
 
     @GetMapping("/profile")
     public String profile() {
@@ -38,6 +42,8 @@ public class profileController {
         String userId = (String) session.getAttribute("userId");
 
         System.out.println("!@@@@@@@@"+newPassword);
+        String filePath = files.getOriginalFilename();
+        System.out.println("@@@@@@@@@@@@@@@@  >>> " + files.getOriginalFilename());
 
         String baseDir = "C:\\Users\\abc\\Desktop\\github간식 선호도 프로젝트\\간식 선호도 집계\\src\\main\\resources\\static\\image";
         String uplodadfilePath = baseDir + "\\" + files.getOriginalFilename();
@@ -46,7 +52,7 @@ public class profileController {
             files.transferTo(new File(uplodadfilePath));
         } catch (IOException e) {
             if(files.getOriginalFilename().equals("")){
-                showFilePath = null;
+                showFilePath = "/image/default.png";
             } else {
                 showFilePath = "/image/"+files.getOriginalFilename();
             }
@@ -56,13 +62,12 @@ public class profileController {
 
         try{
             List<User> user = profileRepository.passwordCheck(userId, password);
+            System.out.println("!@@#!@#"+user.get(0).getName());
             if(!newPassword.isEmpty()) {
                 System.out.println("여기를 왜타냐고!!!!!!!!!!!!!!!!!");
                 user.get(0).setPassword(newPassword);
             }
-            if(showFilePath != null) {
                 user.get(0).setProfile_img_path(showFilePath);
-            }
 
             message.setData(true);
         }catch (IndexOutOfBoundsException e) {
@@ -70,4 +75,5 @@ public class profileController {
         }
         return ResponseEntity.ok(message);
     }
+
 }

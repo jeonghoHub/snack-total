@@ -87,9 +87,9 @@
             return;
         }
         let passwordChkVal = passwordChk(password, newPassword);
-
+        console.log(passwordChkVal);
         if(passwordChkVal === true) {
-            alert("비밀번호가 수정되었습니다.");
+            alert("수정되었습니다.");
             location.href = "profile";
         } else {
             alert("현재 비밀번호가 틀렸습니다.");
@@ -133,6 +133,9 @@
       }
       if(fileType === "jpg" || fileType === "png" ) {
         setImageFromFile(this);
+      } else if(fileType === ""){
+        $('#img-file').val('');
+        $("#profile-img").attr('src', '/image/default.png');
       } else {
         alert("jpg파일 및 png파일만 첨부 가능합니다.");
         $('#img-file').val('');

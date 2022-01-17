@@ -21,11 +21,13 @@ public class ItemService {
     }
 
     @Transactional
-    public void updateItem(Long itemId, String name, String category, String filePath) {
+    public void updateItem(Long itemId, String name, String category, String filePath, Boolean originalFileDivi) {
         SnackItem findItem = itemRepository.findOne(itemId);
         findItem.setName(name);
         findItem.setCateGory(category);
-        findItem.setFilePath(filePath);
+        if(!originalFileDivi) {
+            findItem.setFilePath(filePath);
+        }
     }
 
     public List<SnackItem> findItems(){

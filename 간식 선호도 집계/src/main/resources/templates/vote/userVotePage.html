@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
+<style>
+    * {
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+    }
+    .card img {
+      width: 263px;
+      height: 207px;
+      object-fit: cover;
+      padding : 28px;
+    }
+    .card {
+        border: 2px solid brown;
+    }
+    .col-md-3 {
+        padding-bottom : 15px;
+    }
+    h5 {
+        border-top : 2px solid brown;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+    .datepicker-days {
+        display: none ;
+    }
+
+    .datepicker-months {
+       display: none ;
+    }
+
+    .datepicker-years {
+       display: block ;
+    }
+    .ui-datepicker-calendar {
+        display: none;
+    }
+    .container {
+        padding-bottom: 0px;
+    }
+</style>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <div class="row">
+        <div class="col-md-2">
+            <h3>개인 투표조회</h3>
+        </div>
+        <div class="col-md-3">
+            <span style="display: inline-block">년도선택</span>
+            <input type="text" class="form-control" style="display: inline-block; width: 70%; margin-left: 10px;" id="testDatepicker">
+        </div>
+        <div class="col-md-3">
+            <span style="display: inline-block">카테고리</span>
+            <select id="category" name="category" class="form-control" style="display: inline-block; width: 70%; margin-left: 10px;">
+                <option value="">전체</option>
+                <option value="과자">과자</option>
+                <option value="초콜릿">초콜릿</option>
+                <option value="파이">파이</option>
+                <option value="젤리">젤리</option>
+                <option value="사탕">사탕</option>
+                <option value="소시지">소시지</option>
+                <option value="기타">기타</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" id="name" name="name" class="form-control" placeholder="간식명을 입력하세요">
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">일자</th>
+            <th scope="col">카테고리</th>
+            <th scope="col">간식명</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+<div style="padding-bottom: 1px;">
+</div>
+</body>
+</html>
+<script type="text/javascript" src="/js/adminChk.js"/></script>
+<script>
+adminChk();
+      var myDate = new Date();
+      $("#testDatepicker").val(myDate.getFullYear());
+$(function() {
+  $('#testDatepicker').datepicker( {
+        dateFormat: "yy",
+        yearRange: "c-100:c",
+        changeMonth: false,
+        changeYear: true,
+        showButtonPanel: false,
+        closeText:'Select',
+        currentText: 'This year',
+        onClose: function(dateText, inst) {
+          var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+          $(this).val($.datepicker.formatDate('yy', new Date(year, 1, 1)));
+        },
+        onChangeMonthYear : function () {
+          $(this).datepicker( "hide" );
+          let category = $("#category").val();
+          let name = $("#name").val();
+          let year = $("#testDatepicker").val();
+
+          getUserVoteList(category, name, year);
+        }
+      }).focus(function () {
+        $(".ui-datepicker-month").hide();
+        $(".ui-datepicker-calendar").hide();
+        $(".ui-datepicker-current").hide();
+        $(".ui-datepicker-prev").hide();
+        $(".ui-datepicker-next").hide();
+        $("#ui-datepicker-div").position({
+          my: "left top",
+          at: "left bottom",
+          of: $(this)
+        });
+      }).attr("readonly", false);
+
+      getUserVoteList("", "", myDate.getFullYear());
+});
+
+$("#category").on('change', function(){
+    let category = $("#category").val();
+    let name = $("#name").val();
+    let year = $("#testDatepicker").val();
+
+    getUserVoteList(category, name, year);
+})
+$("#name").keydown(function(key) {
+    if(key.keyCode == 13) {
+        let category = $("#category").val();
+        let name = $("#name").val();
+        let year = $("#testDatepicker").val();
+
+        getUserVoteList(category, name, year);
+    }
+})
+
+function getUserVoteList(category, name, year) {
+    $.ajax({
+        type: "GET",
+        url: "/vote/userVoteList",
+        async: false,
+        data : {category : category, name : name, year : year },
+        success : function(result){
+            $("#tbody").empty();
+            for(let i = 0; i < result.length; i++) {
+                $("#tbody").append(
+                    "<tr>" +
+                    "<th scope='row'>"+(i+1)+"</th> "+
+                    "<td>"+result[i][0]+"</td> "+
+                    "<td>"+result[i][1]+"</td> "+
+                    "<td>"+result[i][2]+"</td> "+
+                    "</tr>"
+                );
+            }
+        },
+        error : function(a, b, c){
+            alert(a + b + c);
+        }
+    });
+}
+</script>

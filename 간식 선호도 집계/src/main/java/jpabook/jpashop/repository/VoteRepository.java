@@ -1,5 +1,7 @@
 package jpabook.jpashop.repository;
 
+import jpabook.jpashop.controller.voteListDto;
+import jpabook.jpashop.snackDomain.SnackItem;
 import jpabook.jpashop.snackDomain.SnackTotal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,12 +10,51 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class VoteRepository {
     private final EntityManager em;
+
+    public List<HashMap<Object, String>> userVoteList(String userId, String date, String category, String name) {
+        String jpql = "select " +
+                "date_format(st.created_date, '%Y-%m-%d') as created_date, " +
+                "si.cate_gory, " +
+                "si.name " +
+                "from " +
+                "snack_item si " +
+                "join snack_total st " +
+                "on " +
+                "si.snack_id = st.snack_id " +
+                "where member_id = :userId ";
+
+        if(date != "" && date != null){
+            jpql += " and date_format(st.created_date, '%Y') = :created_date ";
+        }
+        if(name != "" && name != null){
+            jpql += " and si.name like concat('%',:name,'%') ";
+        }
+        if(category != "" && category != null) {
+            jpql += " and si.cate_gory = :category ";
+        }
+        jpql += " order by created_date desc ;";
+
+        Query query = em.createNativeQuery(jpql).setParameter("userId", userId);
+
+        if(date != "" && date != null){
+            query = query.setParameter("created_date", date);
+        }
+        if(name != "" && name != null){
+            query = query.setParameter("name", name);
+        }
+        if(category != "" && category != null) {
+            query = query.setParameter("category", category);
+        }
+
+        return query.getResultList();
+    }
 
     public Long thisMonthSnackChk(String userId) {
         LocalDate currentDate = LocalDate.now();
