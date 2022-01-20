@@ -22,6 +22,10 @@ public class LoginService {
         if(findUser.isEmpty()){
             throw new IllegalStateException("not select User");
         }
+        String[] a1 = new String[0], a2 = new String[0];
+
+        a1.equals(a2);
+
         return findUser;
     }
 

@@ -109,7 +109,7 @@ public class ItemController {
 
     @RequestMapping("/items/delete")
     public ResponseEntity<Message> deleteItem(SnackItemForm form) {
-        SnackItem one = itemService.findOne(form.getId());
+        SnackItem one = itemRepository.findOne(form.getId());
         itemService.deleteOne(one.getId());
 
         Message message = new Message();
