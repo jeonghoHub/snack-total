@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 public class voteListDto {
     private String year;
     private String category;

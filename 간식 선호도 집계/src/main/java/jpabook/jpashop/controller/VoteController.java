@@ -7,23 +7,17 @@ import jpabook.jpashop.service.TotalService;
 import jpabook.jpashop.snackDomain.SnackItem;
 import jpabook.jpashop.snackDomain.SnackTotal;
 import jpabook.jpashop.snackDomain.User;
+import jpabook.jpashop.snackDomain.voteRankingDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -101,5 +95,11 @@ public class VoteController {
         Long count = voteRepository.thisMonthSnackChk(userId);
         System.out.println(">>>>>>>>COUNT>>>>>>" + count);
         return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/votePage/snackRanking")
+    public ResponseEntity<?>  snackRanking() {
+        List<voteRankingDto> query = voteRepository.thisMonthSnackRanking();
+        return ResponseEntity.ok(query);
     }
 }

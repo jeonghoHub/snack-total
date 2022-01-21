@@ -1,7 +1,9 @@
 package jpabook.jpashop;
 
 import jpabook.jpashop.Interceptor.SessionInterceptor;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -26,5 +28,10 @@ public class Configuration implements WebMvcConfigurer {
         registry.addInterceptor(sessionInterceptor)
                 .excludePathPatterns("/css/**", "/fonts/**", "/plugin/**", "/undefined/**", "/items/css/**",
                         "/scripts/**", "/login", "/api/**",  "/image/**",  "/error/**", "/vendor/**" , "/js/**" , "/images/**");
+    }
+
+    @Bean
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
     }
 }

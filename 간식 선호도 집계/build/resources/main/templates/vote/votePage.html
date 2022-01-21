@@ -30,8 +30,32 @@
         margin-left: 25px;
         margin-right: 25px;
     }
+    #status_board {
+        top: 120px;
+        position: fixed;
+        width: 300px;
+        height: 400px;
+        border: solid 2px pink;
+        z-index: 2;
+        margin-left: 35px;
+    }
 </style>
 <body>
+<div id="status_board">
+    <h4>이번달 순위 현황</h4>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">순위</th>
+            <th scope="col">간식명</th>
+            <th scope="col">카테고리</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+</div>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <div class="row">
@@ -71,7 +95,7 @@
 adminChk();
 var monthVoteCheck = new Boolean();
 month_vote_check();
-
+this_month_snack_rank();
         $.ajax({
             type: "GET",
             url: "/votePage/items",
@@ -103,6 +127,7 @@ month_vote_check();
                 url: "/votePage/search/items",
                 data : { name : name, category: category},
                 success : function(result){
+                    console.log(result);
                     $("#card-row").empty();
                     init_snack_list(result);
                 },
@@ -198,6 +223,20 @@ month_vote_check();
                 }
                 adminChk();
             }
+        }
+
+        function this_month_snack_rank() {
+            $.ajax({
+                type: "GET",
+                url: "/votePage/snackRanking",
+                async: false,
+                success : function(result){
+                    console.log(result);
+                },
+                error : function(a, b, c){
+                    alert(a + b + c);
+                }
+            });
         }
 
         function month_vote_check() {

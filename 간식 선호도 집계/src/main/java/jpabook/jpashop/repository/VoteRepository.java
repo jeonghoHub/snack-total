@@ -1,8 +1,6 @@
 package jpabook.jpashop.repository;
 
-import jpabook.jpashop.controller.voteListDto;
-import jpabook.jpashop.snackDomain.SnackItem;
-import jpabook.jpashop.snackDomain.SnackTotal;
+import jpabook.jpashop.snackDomain.voteRankingDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +68,28 @@ public class VoteRepository {
                 .setParameter("yearMonth",yearMonth)
                 .setParameter("userId", userId)
                 .getSingleResult();
+        return result;
+    }
+
+    public  List<voteRankingDto> thisMonthSnackRanking() {
+
+        LocalDate currentDate = LocalDate.now();
+        String yearMonth = currentDate.toString().substring(0,7);
+
+        Query query = em.createNativeQuery("select " +
+                "count(si.name) as count, " +
+                "si.cate_gory, " +
+                "si.name " +
+                "from " +
+                "snack_item si " +
+                "join snack_total st " +
+                "on si.snack_id = st.snack_id " +
+                "where " +
+                "date_format(st.created_date, '%Y-%m') = '2022-01' " +
+                "group by name " +
+                "order by count desc", "snackRankingMapping");
+        List<voteRankingDto> result = query.getResultList();
+
         return result;
     }
 }
