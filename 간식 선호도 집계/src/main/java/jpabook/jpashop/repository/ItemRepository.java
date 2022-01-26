@@ -29,6 +29,7 @@ public class ItemRepository {
                 .getResultList();
     }
 
+
     public void deleteOne(Long itemId){
         SnackItem snackItem = em.find(SnackItem.class, itemId);
         em.remove(snackItem);

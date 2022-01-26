@@ -1,13 +1,11 @@
 package jpabook.jpashop.controller;
 
 
+import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.VoteRepository;
 import jpabook.jpashop.service.ItemService;
 import jpabook.jpashop.service.TotalService;
-import jpabook.jpashop.snackDomain.SnackItem;
-import jpabook.jpashop.snackDomain.SnackTotal;
-import jpabook.jpashop.snackDomain.User;
-import jpabook.jpashop.snackDomain.voteRankingDto;
+import jpabook.jpashop.snackDomain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,6 +22,7 @@ import java.util.List;
 public class VoteController {
 
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
     private final TotalService totalService;
     private final VoteRepository voteRepository;
 
@@ -38,7 +37,7 @@ public class VoteController {
     }
 
     @GetMapping("/vote/userVoteList")
-    public ResponseEntity<?> userVoteList(HttpServletRequest request, voteListDto param) {
+    public ResponseEntity<?> userVoteList(HttpServletRequest request, VoteListDto param) {
         HttpSession session = request.getSession();
         String userId = (String) session.getAttribute("userId");
 
@@ -51,8 +50,8 @@ public class VoteController {
 
     @GetMapping("/votePage/items")
     public ResponseEntity<?> list() {
-        List<SnackItem> items = itemService.findItems();
-        return ResponseEntity.ok(items);
+        List<voteListDto> voteListDtos = voteRepository.voteList();
+        return ResponseEntity.ok(voteListDtos);
     }
 
     @GetMapping("/votePage/search/items")

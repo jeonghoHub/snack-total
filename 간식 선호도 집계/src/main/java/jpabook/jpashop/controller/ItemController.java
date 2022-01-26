@@ -2,6 +2,7 @@ package jpabook.jpashop.controller;
 
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.service.ItemService;
+import jpabook.jpashop.service.LoginService;
 import jpabook.jpashop.snackDomain.SnackItem;
 import jpabook.jpashop.snackDomain.User;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +38,20 @@ public class ItemController {
     }
 
     @PostMapping("items/new")
-    public ResponseEntity<Message> create(@RequestParam("file") MultipartFile files, SnackItemForm form) throws IOException {
+    public ResponseEntity<Message> create(@RequestParam("file") MultipartFile files,
+                                          HttpServletRequest request,
+                                          SnackItemForm form) throws IOException {
         Message message = new Message();
         HttpHeaders headers = new HttpHeaders();
+        
+        HttpSession session = request.getSession();
+
         String baseDir = "C:\\Users\\abc\\Desktop\\github간식 선호도 프로젝트\\간식 선호도 집계\\src\\main\\resources\\static\\image";
         String filePath = baseDir + "\\" + files.getOriginalFilename();
-        System.out.println("@@@@@@@@@@@@@@@@  >>> " + files.getOriginalFilename());
+
         SnackItem item = new SnackItem();
+
+        item.setCreate_user((String) session.getAttribute("userId"));
         item.setName(form.getName());
         item.setCateGory(form.getCategory());
         try {
@@ -56,6 +64,7 @@ public class ItemController {
                 item.setFilePath("/image/"+files.getOriginalFilename());
             }
         }
+
         itemService.saveItem(item);
 
         message.setStatus(StatusEnum.OK);

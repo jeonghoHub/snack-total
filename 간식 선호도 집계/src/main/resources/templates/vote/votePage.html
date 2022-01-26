@@ -26,29 +26,47 @@
         padding-bottom : 15px;
     }
     h5 {
-        border-top : 2px solid brown;
-        margin-left: 25px;
-        margin-right: 25px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     #status_board {
-        top: 120px;
+        top: 250px;
         position: fixed;
         width: 300px;
-        height: 400px;
+        height: auto;
         border: solid 2px pink;
         z-index: 2;
         margin-left: 35px;
+        background: white;
+    }
+    #remaining_days {
+        top: 200px;
+        position: fixed;
+        width: 300px;
+        height: auto;
+        z-index: 4;
+        margin-left: 50px;
+    }
+    .table th {
+        padding : 2px;
+    }
+    .table td {
+        padding : 2px;
     }
 </style>
 <body>
+<div id="remaining_days">
+
+</div>
 <div id="status_board">
     <h4>이번달 순위 현황</h4>
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th scope="col">순위</th>
-            <th scope="col">간식명</th>
-            <th scope="col">카테고리</th>
+            <th  scope="col">순위</th>
+            <th  scope="col">득표 수</th>
+            <th  scope="col">간식명</th>
+            <th  scope="col">카테고리</th>
         </tr>
         </thead>
         <tbody id="tbody">
@@ -92,6 +110,17 @@
 </html>
 <script type="text/javascript" src="/js/adminChk.js"/></script>
 <script>
+let today = new Date();
+
+let year = today.getFullYear();
+let month = today.getMonth() + 1
+let date = today.getDate();
+
+let lastDate = new Date(year, month, 0).getDate();
+
+let remainingDay = lastDate - date;
+$("#remaining_days").append("<h3>"+month+"월 남은 투표기간 : "+remainingDay+"일</h3>");
+
 adminChk();
 var monthVoteCheck = new Boolean();
 month_vote_check();
@@ -202,6 +231,7 @@ this_month_snack_rank();
                     snackName = result[i].name;
                     snackImageSrc = result[i].filePath;
                     snackId = result[i].id;
+                    createUser = "등록자 : "+result[i].createUser;
                     if(snackImageSrc === null) {
                         snackImageSrc = "/image/default.png";
                     }
@@ -211,8 +241,9 @@ this_month_snack_rank();
                                 "<div class='card'>"+
                                     "<input type=hidden id='snack-id' name='snack-id' >"+
                                     "<img src="+ snackImageSrc +" alt='과자' />"+
-                                    "<h5 style='height: 50px;'>" + snackName + "</h5>"+
-                                    "<div class='card-body'>"+
+                                    "<h5 style='border-top : 2px solid brown; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; width: 247px; height: 25px;'>" + snackName + "</h5>"+
+                                    "<h5 style='height: 25px; text-align: end;'>" + createUser + "</h5>"+
+                                    "<div class='card-body' style='padding-top: 5px; padding: 0.5rem;'>"+
                                         "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>"+
                                         "<button type=button id='delete' style='display: none; float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>"+
                                         "<button type=button id='modify' style='display: none; float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>"+
@@ -232,6 +263,16 @@ this_month_snack_rank();
                 async: false,
                 success : function(result){
                     console.log(result);
+                    for(let i = 0; i < result.length; i++) {
+                        $("#tbody").append(
+                            "<tr>" +
+                            "<th scope='row'>"+(i+1)+"</th> "+
+                            "<td>"+result[i].count+"</td> "+
+                            "<td>"+result[i].name+"</td> "+
+                            "<td>"+result[i].cate_gory+"</td> "+
+                            "</tr>"
+                        );
+                    }
                 },
                 error : function(a, b, c){
                     alert(a + b + c);

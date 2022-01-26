@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 @SpringBootTest
@@ -20,6 +23,9 @@ class JpashopApplicationTests {
 	private ItemRepository itemRepository;
 	@Autowired
 	private VoteRepository voteRepository;
+	@Autowired
+	private EntityManager em;
+
 
 	@Test
 	void contextLoads() {
@@ -45,5 +51,17 @@ class JpashopApplicationTests {
 	void 이번달_간식_투표_순위() {
 		List<voteRankingDto> query = voteRepository.thisMonthSnackRanking();
 		System.out.println(query);
+	}
+	@Test
+	void 간식_리스트_네이티브쿼리() {
+		Query voteListMapping = em.createNativeQuery("select\n" +
+				"\tsi.file_path as filePath,\n" +
+				"\tsi.name as name,\n" +
+				"\tu.name as createUser\n" +
+				"from\n" +
+				"\tsnack_item si\n" +
+				"left join user u on\n" +
+				"\tsi.create_user = u.user_id", "voteListMapping");
+		System.out.println(voteListMapping.getResultList());
 	}
 }

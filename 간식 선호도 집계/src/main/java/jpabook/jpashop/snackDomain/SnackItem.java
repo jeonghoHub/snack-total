@@ -23,4 +23,6 @@ public class SnackItem {
 
     private String filePath;
 
+    private String create_user;
+
 }

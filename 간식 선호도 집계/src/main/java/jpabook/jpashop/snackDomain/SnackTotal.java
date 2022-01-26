@@ -18,6 +18,16 @@ import java.time.LocalDateTime;
                         @ColumnResult(name="cate_gory", type = String.class),
                 })
 )
+@SqlResultSetMapping(
+        name="voteListMapping",
+        classes = @ConstructorResult(
+                targetClass = voteListDto.class,
+                columns = {
+                        @ColumnResult(name="filePath", type = String.class),
+                        @ColumnResult(name="name", type = String.class),
+                        @ColumnResult(name="createUser", type = String.class),
+                })
+)
 
 
 @Entity
@@ -29,11 +39,11 @@ public class SnackTotal {
     @Column(name = "snack_total_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "snack_id")
     private SnackItem snackItem;
 

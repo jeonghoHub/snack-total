@@ -1,6 +1,8 @@
 package jpabook.jpashop.repository;
 
+import jpabook.jpashop.controller.VoteListDto;
 import jpabook.jpashop.snackDomain.voteRankingDto;
+import jpabook.jpashop.snackDomain.voteListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -90,6 +92,19 @@ public class VoteRepository {
                 "order by count desc", "snackRankingMapping");
         List<voteRankingDto> result = query.getResultList();
 
+        return result;
+    }
+
+    public List<voteListDto> voteList() {
+        Query query = em.createNativeQuery("select\n" +
+                "\tsi.file_path as filePath,\n" +
+                "\tsi.name as name,\n" +
+                "\tu.name as createUser\n" +
+                "from\n" +
+                "\tsnack_item si\n" +
+                "left join user u on\n" +
+                "\tsi.create_user = u.user_id", "voteListMapping");
+        List result = query.getResultList();
         return result;
     }
 }
