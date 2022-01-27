@@ -30,28 +30,62 @@
         margin-right: 10px;
     }
     #status_board {
-        top: 250px;
+        top: 160px;
         position: fixed;
-        width: 300px;
-        height: auto;
-        border: solid 2px pink;
         z-index: 2;
-        margin-left: 35px;
-        background: white;
+        margin-left: 21px;
     }
     #remaining_days {
-        top: 200px;
+        top: 114px;
         position: fixed;
         width: 300px;
         height: auto;
         z-index: 4;
         margin-left: 50px;
     }
-    .table th {
-        padding : 2px;
+    .table {
+        display: block;
+        width: 320px;
+        border-bottom: solid darkred;
     }
     .table td {
+        vertical-align: baseline;
         padding : 2px;
+    }
+    .table th{
+        padding : 2px;
+    }
+    .table thead th {
+        border-top: 3px solid darkred;
+        border-bottom: 3px solid darkred;
+    }
+    #tbody th {
+        padding : 2px;
+    }
+    .table th:nth-of-type(1), .table td:nth-of-type(1) {
+        width: 40px;
+    }
+    .table th:nth-of-type(2), .table td:nth-of-type(2) {
+        width: 120px;
+    }
+    .table th:nth-of-type(3), .table td:nth-of-type(3) {
+        width: 68px;
+    }
+    .table th:last-child {
+        width: 70px;
+    }
+
+    .table td:last-child {
+        padding : 2px;
+        width: calc( 100px - 19px );
+    }
+    #delete {
+        margin-left : 10px;
+    }
+    #tbody {
+        display: block;
+        height: 410px;
+        overflow: auto;
     }
 </style>
 <body>
@@ -60,13 +94,13 @@
 </div>
 <div id="status_board">
     <h4>이번달 순위 현황</h4>
-    <table class="table table-bordered">
+    <table class="table">
         <thead>
         <tr>
             <th  scope="col">순위</th>
-            <th  scope="col">득표 수</th>
             <th  scope="col">간식명</th>
             <th  scope="col">카테고리</th>
+            <th  scope="col">득표 수</th>
         </tr>
         </thead>
         <tbody id="tbody">
@@ -119,17 +153,20 @@ let date = today.getDate();
 let lastDate = new Date(year, month, 0).getDate();
 
 let remainingDay = lastDate - date;
-$("#remaining_days").append("<h3>"+month+"월 남은 투표기간 : "+remainingDay+"일</h3>");
+$("#remaining_days").append("<h3>"+month+"월 남은 투표기간 : "+(remainingDay+1)+"일</h3>");
 
-adminChk();
+var userinfo = adminChk();
+var loginUser = userinfo.id;
+
 var monthVoteCheck = new Boolean();
 month_vote_check();
 this_month_snack_rank();
+
         $.ajax({
             type: "GET",
             url: "/votePage/items",
             success : function(result){
-                init_snack_list(result);
+                init_snack_list(result, thisMonthMyChooseSnack());
             },
             error : function(a, b, c){
                 alert(a + b + c);
@@ -158,7 +195,7 @@ this_month_snack_rank();
                 success : function(result){
                     console.log(result);
                     $("#card-row").empty();
-                    init_snack_list(result);
+                    init_snack_list(result, thisMonthMyChooseSnack());
                 },
                 error : function(a, b, c){
                     alert(a + b + c);
@@ -180,7 +217,7 @@ this_month_snack_rank();
                 data: { id : snack_id },
                 success : function(result){
                     alert("투표 완료되었습니다.");
-                    month_vote_check();
+                    location.replace('/votePage');
                 },
                 error : function(a, b, c){
                     alert(a + b + c);
@@ -189,33 +226,39 @@ this_month_snack_rank();
         }
 
         function update_snack_page(id) {
-            let a = id.parentNode.parentNode;
+            let a = id.parentNode.parentNode.parentNode;
             let snack_id = $(a).find("#snack-id").val();
             location.href = "items/"+snack_id+"/edit";
         }
 
         function delete_snack(id) {
-            let a = id.parentNode.parentNode;
-            let snack_id = $(a).find("#snack-id").val();
-            $.ajax({
-                type: "POST",
-                url: "/items/delete",
-                data: {id : snack_id},
-                success : function(result){
-                    let request = result.status;
-                    if(request === "OK") {
-                        location.replace('/votePage');
-                    } else {
-                        alert("error");
+            if(confirm("정말 삭제하시겠습니까?") == true) {
+                let a = id.parentNode.parentNode.parentNode;
+                let snack_id = $(a).find("#snack-id").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/items/delete",
+                    data: {id : snack_id},
+                    success : function(result){
+                        let request = result.status;
+                        if(request === "OK") {
+                            location.replace('/votePage');
+                        } else {
+                            alert("error");
+                        }
+                    },
+                    error : function(a, b, c){
+                        alert(a + b + c);
                     }
-                },
-                error : function(a, b, c){
-                    alert(a + b + c);
-                }
-            });
+                });
+            } else {
+                return false;
+            }
         }
 
-        function init_snack_list(result) {
+        function init_snack_list(result, myChooseSnackId) {
+            let chooseSnackId = myChooseSnackId[0][1];
+
             if(result.length === 0) {
                 $(".row").css('align-items', 'center');
                 $("#card-row").append(
@@ -227,11 +270,24 @@ this_month_snack_rank();
                 $(".row").css('justify-content', '');
                 let snackName = "";
                 let snackImageSrc = "";
+                var cardStyle = "";
                 for(let i = 0; i < result.length; i++){
                     snackName = result[i].name;
                     snackImageSrc = result[i].filePath;
-                    snackId = result[i].id;
+                    snackId = result[i].itemId;
+                    userId = result[i].userId;
                     createUser = "등록자 : "+result[i].createUser;
+
+                    if(userId === loginUser) {
+                        cardStyle = "style = 'float:right' ";
+                    } else {
+                        cardStyle = "style = 'display: none; float:right' ";
+                    }
+
+                    if(chooseSnackId === snackId) {
+                        console.log("뵤!");
+                    }
+
                     if(snackImageSrc === null) {
                         snackImageSrc = "/image/default.png";
                     }
@@ -244,9 +300,9 @@ this_month_snack_rank();
                                     "<h5 style='border-top : 2px solid brown; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; width: 247px; height: 25px;'>" + snackName + "</h5>"+
                                     "<h5 style='height: 25px; text-align: end;'>" + createUser + "</h5>"+
                                     "<div class='card-body' style='padding-top: 5px; padding: 0.5rem;'>"+
-                                        "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표하기 </button>"+
-                                        "<button type=button id='delete' style='display: none; float:right;' class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>"+
-                                        "<button type=button id='modify' style='display: none; float:right;' class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>"+
+                                        "<button type=button id='vote' class='btn btn-primary' onclick=insert_vote(this)> 투표 </button>"+
+                                        "<button type=button id='delete' " + cardStyle + " class='admin btn btn-danger' onclick=delete_snack(this)> 삭제 </button>"+
+                                        "<button type=button id='modify' " + cardStyle + " class='admin btn btn-success' onclick=update_snack_page(this)> 수정 </button>"+
                                     "</div>"+
                                 "</div>"+
                             "</div>");
@@ -262,16 +318,20 @@ this_month_snack_rank();
                 url: "/votePage/snackRanking",
                 async: false,
                 success : function(result){
-                    console.log(result);
+                    let snackStatusFirst = "<img style='width:120px;' src="+result[0].filePath+" alt='과자' />" ;
                     for(let i = 0; i < result.length; i++) {
                         $("#tbody").append(
                             "<tr>" +
-                            "<th scope='row'>"+(i+1)+"</th> "+
-                            "<td>"+result[i].count+"</td> "+
-                            "<td>"+result[i].name+"</td> "+
+                            "<td scope='row'>"+(i+1)+"</td> "+
+                            "<td>"+
+                            snackStatusFirst+
+                            "<p>"+result[i].name+"</p>" +
+                            "</td> "+
                             "<td>"+result[i].cate_gory+"</td> "+
+                            "<td>"+result[i].count+"</td> "+
                             "</tr>"
                         );
+                        snackStatusFirst = "";
                     }
                 },
                 error : function(a, b, c){
@@ -296,5 +356,20 @@ this_month_snack_rank();
                     alert(a + b + c);
                 }
             });
+        }
+        function thisMonthMyChooseSnack() {
+            let snack_id;
+            $.ajax({
+                type: "GET",
+                url: "/votePage/myChooseSnack",
+                async: false,
+                success : function(result){
+                    snack_id = result;
+                },
+                error : function(a, b, c){
+                    alert(a + b + c);
+                }
+            });
+            return snack_id;
         }
 </script>

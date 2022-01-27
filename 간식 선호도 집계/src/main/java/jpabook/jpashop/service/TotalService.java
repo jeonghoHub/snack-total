@@ -4,6 +4,7 @@ import jpabook.jpashop.controller.SnackItemForm;
 import jpabook.jpashop.repository.TotalRepository;
 import jpabook.jpashop.snackDomain.SnackItem;
 import jpabook.jpashop.snackDomain.SnackTotal;
+import jpabook.jpashop.snackDomain.voteListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class TotalService {
     }
 
     @Transactional
-    public List<SnackItem> searchSnack(String name, String category) {
+    public List<voteListDto> searchSnack(String name, String category) {
         return totalRepository.searchSnack(name, category);
     }
 

@@ -56,11 +56,9 @@ public class VoteController {
 
     @GetMapping("/votePage/search/items")
     public ResponseEntity<?> searchList(SnackItemForm snackItemForm) {
-        List<SnackItem> items;
+        List<voteListDto> items;
         System.out.println(">>>>>>>" + snackItemForm.getName());
-        if(snackItemForm.getName().equals("")){
-            items = itemService.findItems();
-        }
+
         items = totalService.searchSnack(snackItemForm.getName(), snackItemForm.getCategory());
 
         return ResponseEntity.ok(items);
@@ -100,5 +98,13 @@ public class VoteController {
     public ResponseEntity<?>  snackRanking() {
         List<voteRankingDto> query = voteRepository.thisMonthSnackRanking();
         return ResponseEntity.ok(query);
+    }
+
+    @GetMapping("/votePage/myChooseSnack")
+    public ResponseEntity<?> myChooseSnack(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String userId = (String) session.getAttribute("userId");
+        List chooseSnackFilePath = voteRepository.thisMonthMyChooseSnack(userId);
+        return ResponseEntity.ok(chooseSnackFilePath);
     }
 }

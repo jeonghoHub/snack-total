@@ -6,6 +6,7 @@ import jpabook.jpashop.repository.VoteRepository;
 import jpabook.jpashop.snackDomain.SnackItem;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import jpabook.jpashop.snackDomain.SnackTotal;
 import jpabook.jpashop.snackDomain.voteRankingDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @SpringBootTest
@@ -63,5 +66,8 @@ class JpashopApplicationTests {
 				"left join user u on\n" +
 				"\tsi.create_user = u.user_id", "voteListMapping");
 		System.out.println(voteListMapping.getResultList());
+	}
+	@Test
+	void 간식_체크() {
 	}
 }

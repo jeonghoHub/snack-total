@@ -3,6 +3,7 @@ package jpabook.jpashop.repository;
 import jpabook.jpashop.snackDomain.SnackItem;
 import jpabook.jpashop.snackDomain.SnackTotal;
 import jpabook.jpashop.snackDomain.User;
+import jpabook.jpashop.snackDomain.voteListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,16 +24,26 @@ public class TotalRepository {
         em.persist(snackTotal);
     }
 
-    public List<SnackItem> searchSnack (String name, String category) {
-        String jpql = "select s from SnackItem s where 1=1";
+    public List<voteListDto> searchSnack (String name, String category) {
+        String jpql = "select\n" +
+                "\tsi.file_path as filePath,\n" +
+                "\tsi.name as name,\n" +
+                "\tsi.snack_id as itemId,\n" +
+                "\tu.user_id as userId,\n" +
+                "\tu.name as createUser\n" +
+                "from\n" +
+                "\tsnack_item si\n" +
+                "left join user u on\n" +
+                "\tsi.create_user = u.user_id " +
+                "where 1=1 ";
 
         if(name != "" && name != null){
-            jpql += " and s.name like concat('%',:name,'%') ";
+            jpql += " and si.name like concat('%',:name,'%') ";
         }
         if(category != "" && category != null) {
-            jpql += " and s.cateGory = :category ";
+            jpql += " and si.cate_gory = :category ";
         }
-        TypedQuery<SnackItem> query = em.createQuery(jpql, SnackItem.class);
+        Query query = em.createNativeQuery(jpql, "voteListMapping");
 
         if(name != "" && name != null){
             query = query.setParameter("name", name);

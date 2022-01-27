@@ -7,12 +7,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class voteListDto {
     private String filePath;
     private String name;
+    private String userId;
     private String createUser;
+    private String itemId;
 
-    public voteListDto(@JsonProperty String filePath, @JsonProperty String name,
-                       @JsonProperty String createUser) {
+    public voteListDto(@JsonProperty String filePath, @JsonProperty String name, @JsonProperty String userId,
+                       @JsonProperty String createUser, @JsonProperty String itemId) {
         this.filePath = filePath;
         this.name = name;
+        this.userId = userId;
         this.createUser = createUser;
+        this.itemId = itemId;
     }
 }

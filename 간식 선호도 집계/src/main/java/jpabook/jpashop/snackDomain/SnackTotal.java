@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
                         @ColumnResult(name="count", type = Long.class),
                         @ColumnResult(name="name", type = String.class),
                         @ColumnResult(name="cate_gory", type = String.class),
+                        @ColumnResult(name="filePath", type = String.class)
                 })
 )
 @SqlResultSetMapping(
@@ -25,7 +26,9 @@ import java.time.LocalDateTime;
                 columns = {
                         @ColumnResult(name="filePath", type = String.class),
                         @ColumnResult(name="name", type = String.class),
+                        @ColumnResult(name="userId", type = String.class),
                         @ColumnResult(name="createUser", type = String.class),
+                        @ColumnResult(name="itemId", type = String.class)
                 })
 )
 
